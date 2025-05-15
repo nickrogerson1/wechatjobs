@@ -1,0 +1,14 @@
+<h4>You have received the following message from the WeChatJobs {% if username %}Internal{% else %} External{% endif %} Contact Form:</h4>
+<p><strong>Honeypot</strong>: {{ honeypot }}</p>
+{% if username %}
+<p><strong>Username</strong>: {{ username }}</p>
+{% endif %}
+<p><strong>Name</strong>: {{ name }}</p>
+<p><strong>Email</strong>: {{ email }}</p>
+<p><strong>Wechat</strong>: {{ wechat }}</p>
+{% if user_type %}
+<p><strong>User Type</strong>: {{ user_type }}</p>
+{% endif %}
+<p><strong>Subject</strong>: {{ subject }}</p>
+<p><strong>Message</strong>:</p>
+<p>{{ message }}</p>

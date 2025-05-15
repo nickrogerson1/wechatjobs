@@ -1,0 +1,24 @@
+{% extends "jobsboard/layouts/base.html" %}
+{% load static %}
+
+{% block title %} - Confirm Your Email{% endblock %}
+
+{% block content %}
+<div class="row pt-lg-0 pt-5">
+    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 mt-5 offset-md-2 pt-5 mt-5">
+        <div class="px-5 px-md-3">
+            <h1 class="text-center">Confirm Your Email Address</h1>
+
+            <div class="text-center mt-4">
+                <img src="{% static 'images/gentleman-confirm.svg' %}" id="confirm" alt="gentleman confirm">
+            </div>
+
+            <p class="mt-4 main-text">
+            We have just sent an email to <strong>{{ email }}</strong>. 
+            Go to that email address and click on the link in the email to confirm your account!
+            Please note that you may need to check your spam folder to find the email.
+            </p>
+        </div>   
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends "jobsboard/layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="row pt-lg-0 pt-5">
+    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 mt-5 offset-md-2 pt-5 mt-5">
+        <div class="px-5 px-md-3">
+            <h1>Congratulations, your account is now activated!</h1>
+
+            <div class="text-center mt-4">
+                <img src="{% static 'images/fireworks.svg' %}" id="activated" alt="fireworks">
+            </div>
+        
+            <p class="mt-5 main-text text-center">
+            Please you use this link to log back in: 
+            <a href="{% url 'login' %}" class="text-primary">Login</a>
+            </P>   
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

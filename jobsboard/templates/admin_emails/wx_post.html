@@ -1,0 +1,28 @@
+<h3>Results for the past 24 hours</h3>
+<h4>Report generated on {{ now|date:'D, jS M y \a\t g:i:s a' }} UTC</h4>
+
+<table>
+    <tr>
+        <th>#</th>
+        <th>Sched Time</th>
+        <th>Actual Time</th>
+        <th>Group Name</th>
+        <th>Group ID</th>
+        <th>G. Left</th>
+        <th>Mess. ID</th>
+        <th>Result</th>
+    </tr>
+    
+    {% for d in data %}
+    <tr>
+        <td>{{ forloop.counter }}.</td>
+        <td>{{ d.0|date:'G:i:s' }}</td>
+        <td>{{ d.1|date:'G:i:s' }}</td>
+        <td>{{ d.2 }}</td>
+        <td>{{ d.3 }}</td>
+        <td style="text-align: center;">{{ d.4 }}</td>
+        <td style="text-align: center;">{{ d.5 }}</td>
+        <td>{{ d.6 }}</td>
+    </tr>
+    {% endfor %}
+  </table>

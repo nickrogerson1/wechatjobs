@@ -1,0 +1,190 @@
+{% extends "../layouts/table-base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block stylesheets %}
+<style>
+#delete-area{
+    display: none;
+    visibility: hidden;
+    color: white;
+}
+
+#delete-area button{
+    color: white;
+    font-weight: 700;
+}
+
+
+
+</style>
+{% endblock stylesheets %}
+
+{% block title %}Manage Jobs{% endblock title %}
+
+{% block h1 %}Manage Jobs{% endblock h1 %}
+
+{% block detailedlist %}Detailed list of all your job offers.{% endblock detailedlist %}
+
+{% block deleteurl %}{% url 'delete-job' %}{% endblock deleteurl %}
+
+{% block tableempty %}You've still not created any jobs yet!{% endblock tableempty %}
+
+{% block table %}
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th class="pxp-is-checkbox" style="width: 1%;"><input type="checkbox" id="select-all-items" class="form-check-input"></th>
+
+            <th>Job</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Applications</th>
+            <th colspan="2">Date Updated
+            {% if object_list|length > 1 %}
+                {% if order == 'A' %}
+                    <a href="{% url 'manage-jobs' %}">
+                    <span class="fa fa-angle-up ms-3 fa-2x" style="vertical-align: sub;"></span>
+                    </a>
+                {% else %}
+                    {# This the default ordering #}
+                    <a href="{% url 'manage-jobs' %}?order=A">
+                    <span class="fa fa-angle-down fa-2x ms-2" style="vertical-align: sub;"></span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for job in object_list %}
+        <!-- <h1>PK: {{ job.pk }}</h1> -->
+        <tr>
+            <td><input type="checkbox" class="form-check-input checkbox" id="{{ job.pk }}" value="{{ job.pk }}" name="checks" form="delete-files"></td>
+            <td>
+                <a href="{% url 'job' job.pk %}">
+                    <div class="pxp-company-dashboard-job-title">
+                        {% if job.job_title %}
+                         {{ job.job_title|truncatechars:30 }}
+                        {% else %}
+                         {{ job.job_description|truncatechars:30 }}
+                        {% endif %}
+                    </div>
+                    
+                    
+                    
+                    <div class="pxp-company-dashboard-job-location">
+                        <span class="fa fa-globe me-1"></span>
+                            {% if job.cities|length > 10 %}
+                            Everywhere
+                        {% else %} 
+                            {% for city in job.cities %}
+                            {{ city|capfirst }}{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                            {% empty %}
+                            N/A
+                            {% endfor %}
+                        {% endif %}
+                        
+                    </div>
+                </a>
+            </td>
+            <td>
+                <div class="pxp-company-dashboard-job-category">
+                    {% for type in job.job_types %}
+                    
+{% if type in 'dj,ktv' %}{{ type|upper }}{% else %}{{ type|title }}{% endif %}{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                        {% empty %}
+                        N/A
+                    {% endfor %}
+                </div>
+            </td>
+            <td>
+                <div class="pxp-company-dashboard-job-type">
+                    {% if job.employment_type %} {{ job.employment_type|display_name }} {% else %} Unknown {% endif %}
+                </div>
+            </td>
+            <td>
+
+            {% if job.app_count %}
+            <a href="{% url 'apps-by-job' job.pk %}" class="pxp-company-dashboard-job-applications">
+                {{ job.app_count }} Applicant{% if job.app_count != 1 %}s{% endif %}   
+            </a>
+            {% else %}
+            <p class="pxp-company-dashboard-job-applications">None</p>
+            {% endif %}
+
+         
+            
+            </td>
+            <td>
+                <div class="pxp-company-dashboard-job-status">
+                    <span class="badge rounded-pill
+                        {% if job.promoted %}
+                        bg-primary promoted-ad"  data-time="{{ job.expiry_date }}">
+                        Promoted
+                        {% elif job.is_draft %}
+                        bg-secondary">Draft
+                        {% else %}
+                        bg-success">Published
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="pxp-company-dashboard-job-date mt-1">{{ job.time_updated }}</div>
+            </td>
+            <td>
+                <div class="pxp-dashboard-table-options">
+                    <ul class="list-unstyled">
+                        
+                  
+                    {% if not max_promoted_jobs_exceeded and not job.is_draft %}
+
+                        {% if job.expiry_date < 0 or not job.promoted %}
+                        <a href="{% url 'promote-job' job.pk %}/">
+                            <li>
+                                <button title=
+                                {% if job.expiry_date < 0 %}
+                                    "Promote Again"
+                                {% else %}
+                                    "Promote"
+                                 {% endif %}
+                                 ><span class="fa fa-rocket"></span></button>
+                            </li>
+                        </a>
+                        {% endif %}
+
+                    {% endif %}
+
+            
+
+
+                        <a href="{% url 'edit-job' job.pk %}">
+                            <li>
+                                <button title="Edit"><span class="fa fa-pencil"></span></button>
+                            </li>
+                        </a>
+                        <a href="{% url 'job' job.pk %}">
+                            <li>
+                                <button title="View"><span class="fa fa-eye"></span></button>
+                            </li>
+                        </a>
+
+                        <li>
+                            <form id="job-{{ job.pk }}" method="post" action="{% url 'delete-job' job.pk %}/">
+                                {% csrf_token %} 
+                            
+                                <button type="button" class="delete-single-job" data-job-pk="{{ job.pk }}" data-promoted="{{ job.promoted }}">
+                                    <span class="fa fa-trash-o" ></span>
+                                </button>
+                           
+                            </form>
+                        </li>                         
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock table %}
+

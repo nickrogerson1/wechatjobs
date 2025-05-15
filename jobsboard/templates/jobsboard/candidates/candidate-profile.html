@@ -1,0 +1,299 @@
+{% extends user.candidate|yesno:"jobsboard/layouts/candidate-base.html,jobsboard/layouts/employer-base.html" %}
+{% load static %}
+{% load countries %}
+
+{% block title %} Candidate Profile {% endblock title %}
+
+{% block stylesheets %}
+
+<style>
+    .form-control:disabled {
+        background-color: #e9ecef !important;
+    }
+
+    #id_job_types {
+        display: grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
+        row-gap: 10px;
+    }
+
+    @media (max-width: 550px) {
+        #id_job_types {
+            grid-template-columns:repeat(auto-fit,minmax(170px, 1fr));
+            row-gap: 5px;
+        }
+    }
+
+    #profile-image {
+        /* margin-top: 10%; */
+        height: auto;
+        width: 80%;
+        clip-path: circle();
+    }
+
+
+
+
+    /* Adds triangle to videos */
+    
+    #video-gallery .nGY2GThumbnailImage.nGY2TnImgBack::before {
+        color: white;
+        content: "\25B8";
+        opacity: 0.6;
+        position: absolute;
+        z-index: 100;
+        font-size:200px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Make the button fade on hover */
+    #video-gallery .nGY2GThumbnailImage.nGY2TnImgBack:hover::before {
+        opacity: 0.4;
+    }
+
+    h5 span {
+        font-weight: 300;
+    }
+
+    h4 {
+        color:red;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.5/css/nanogallery2.min.css" integrity="sha512-6sOT9zKSKq1CYgNMqtcY84tFPDnG1yX5mxwdGQiAVpAomVr2kUKJ//pFeU/KfaZDVCOru5iFOVswpT4RWWF2dQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock stylesheets %}
+
+{% block innercontent %}
+
+<div class="pxp-dashboard-content-details">
+    <h1>Candidate Profile</h1>
+    {% if user.candidate %}
+        <p class="pxp-text-light">This is your candidate profile page which you can let recruiters view.</p>
+    {% else %}
+        <p class="pxp-text-light">This is {{ name|title }}'s profile page.</p>
+    {% endif %}
+
+
+<div class="row mt-4 mt-lg-5">
+    <h2>Basic Info</h2>
+
+    <div class="row">
+
+    {% if profile_pic_url %}
+
+        <div class="col-sm-6 mb-3">
+            <div class="d-flex justify-content-center">
+                <img src="{{ profile_pic_url }}"  id="profile-image" alt="profile picture" >
+            </div>
+        </div>
+        
+        <div class="col-sm-6 mt-1">
+            
+            <div class="mb-3">
+                <h5>Name: <span>{{ name|title }}</span></h5>
+            </div>
+    
+            <div class="mb-3">
+                <h5>Email: <span>{{ email }}</span></h5>
+            </div>
+
+            <div class="mb-3">
+                <h5>Sex: <span>{% if sex == 1 %} Male {% elif sex == 0 %} Female {% else %} N/A {% endif %}</span></h5>
+            </div>
+    
+            <div class="mb-3">
+                <h5>Age: <span>{% if age %}{{ age }} years old{% else %}N/A{% endif %}</span></h5>
+            </div>
+
+            <div class="mb-3">
+                <h5>Wechat ID: <span>{% if wechat_id %}{{ wechat_id }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+    
+            <div class="mb-3">
+                <h5>Whatsapp: <span>{% if phone_number %}{{ phone_number }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+
+            <div class="mb-3">
+                <h5>Current City: <span>{% if city %}{{ city }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+                
+            <div>
+                    
+                <h5>Country of Origin:
+                {% if country %}
+                {% get_country country as country %}
+                <img src="{{ country.flag }}" alt="{{ country.name }} flag"> <span>{{ country.name }}
+                {% else%}
+                <span>N/A
+                {% endif %}
+                </span></h5>
+            </div>
+        </div>
+    
+
+    {% else %}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Name: <span>{{ name|title }}</span></h5>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Email: <span>{{ email }}</span></h5>
+            </div>
+        </div> 
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Sex: <span>{% if sex == 1 %} Male {% elif sex == 0 %} Female {% else %} N/A {% endif %}</span></h5>
+            </div>
+        </div>
+        
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Age: <span>{% if age %}{{ age }} years old{% else %}N/A{% endif %}</span></h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Wechat ID: <span>{% if wechat_id %}{{ wechat_id }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Whatsapp: <span>{% if phone_number %}{{ phone_number }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <h5>Current City: <span>{% if city %}{{ city }}{% else %}N/A{% endif %}</span></h5>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="mb-3">
+                    
+                <h5>Country of Origin:
+                    {% if country %}
+                    {% get_country country as country %}
+                    <img src="{{ country.flag }}" alt="{{ country.name }} flag"> <span>{{ country.name }}
+                    {% else %}
+                    <span>N/A
+                    {% endif %}
+                    </span></h5>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    </div>
+
+    {% if job_types %}
+    <div class="mb-3 mt-2" > 
+        <h5>Jobs Most Interested In:</h5>
+        
+        <div id="id_job_types">
+            {% for jtype in job_types %}
+                <h5><span>{{ jtype|title }}</span></h5>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    {% if intro %}
+    <div class="mb-3">
+        <h5>About you:</h5>
+        <p>{{ intro }}</p>
+    </div>
+    {% endif %}
+
+
+    {% if cv %}
+    <h5>CV</h5>
+    <div class="mb-3">
+        <h5>Download: <a href="{{ cv.url }}">{{ cv_fname }}</a></h5>
+    </div>
+    {% endif %} 
+
+
+
+
+    {% if images %}
+    <h5 id="image-gallery-text">Photos</h5>
+    <div id="image-gallery" data-nanogallery2='{
+        "thumbnailHeight": "auto",
+        "thumbnailWidth": "250 XS400",
+        "thumbnailDisplayTransition": "slideUp2",
+        "thumbnailDisplayTransitionDuration":500,  
+        "thumbnailDisplayInterval": 30
+        
+    }'>
+
+    {% for img in images %}
+        <a  href="{{ img.image.url }}" 
+            data-ngthumb="{{ img.image.url }}"
+            data-ngid={{ img.pk }}
+            data-ngcustomData='{ "id":"{{ img.pk }}"}'>
+        </a>
+    {% endfor %}
+    </div>
+    {% endif %}  
+
+
+
+    {% if videos %}
+    <h5 class="mt-3" id="video-gallery-text">Videos</h5>
+    <div id="video-gallery" data-nanogallery2='{
+        "thumbnailHeight": "auto",
+        "thumbnailWidth": "300 XS400",
+        "thumbnailDisplayTransition": "slideUp2",
+        "thumbnailDisplayTransitionDuration":500,  
+        "thumbnailDisplayInterval": 30,
+        
+        "viewerTools":     {
+            "topLeft":    "pageCounter",
+            "topRight":   "fullscreenButton, closeButton"
+            }
+    }'>
+        {% for vid in videos %}
+            <a href="{{ vid.video.url }}" 
+                data-ngthumb="{{ vid.thumbnail }}"
+                data-ngid={{ vid.pk }}
+                data-ngcustomData='{ "id":"{{ vid.pk }}"}'>
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}   
+
+</div>
+
+
+{% endblock innercontent %}
+
+
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.5/jquery.nanogallery2.min.js" integrity="sha512-tvpLVnZrWnnNzV2921XEMx4xkFTUF8xg3s+Mi6cvC/R7A6X1FkpBUXPJFa3Xh5uD9BvOZ2tHeYq/5ZqrweW86Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock javascript %}

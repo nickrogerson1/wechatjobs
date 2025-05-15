@@ -1,0 +1,67 @@
+{% extends "jobsboard/layouts/base.html" %}
+{% load static %}
+
+{% block title %} Log In {% endblock %}
+
+{% block stylesheets %}
+
+<section class="pxp-hero vh-100" style="background-color: var(--pxpMainColorLight);">
+    <div class="row align-items-center pxp-sign-hero-container">
+        <div class="col-xl-6 pxp-column">
+            <div class="mt-5 pxp-sign-hero-fig text-center pb-100 pt-100">
+                <img src="{% static 'images/signin-big-fig.png' %}" alt="Sign In">
+                <h1 class="mt-4 mt-lg-5">Welcome back!</h1>
+            </div>
+        </div>
+        <div class="col-xl-6 pxp-column pxp-is-light">
+            <div class="pxp-sign-hero-form pb-100 pt-100">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-xl-7">
+                        <div class="pxp-sign-hero-form-content">
+
+                            <h3 class="text-center">Sign In</h3>
+
+                            {% if form.errors %}
+                                {% for field, errors in form.errors.items %}
+                                    {% for e in errors%}
+                                    <p>{{ e|safe }}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                            <h6 class="text-center">Please enter your Log In details:</h6>
+                            {% endif %} 
+
+                            
+                            <form class="mt-4" method="post">
+                                {% csrf_token %}
+
+                                <div class="form-floating mb-3">
+                                    {{ form.username }}
+                                    <!-- <input type="email" class="form-control" id="pxp-signin-page-email" placeholder="Email address"> -->
+                                    <label for="pxp-signin-page-email">Username</label>
+                                    <span class="fa fa-user"></span>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ form.password }}
+                                    <!-- <input type="password" class="form-control" id="pxp-signin-page-password" placeholder="Password"> -->
+                                    <label for="pxp-signin-page-password">Password</label>
+                                    <span class="fa fa-lock"></span>
+                                </div>
+                                <button type="submit" class="btn rounded-pill pxp-sign-hero-form-cta" style="width:100%">Continue</button>
+                                <!-- <a href="#" class="btn rounded-pill pxp-sign-hero-form-cta">Continue</a> -->
+                                <div class="mt-4 text-center pxp-sign-hero-form-small">
+                                    <a href="{% url 'reset_password' %}" class="pxp-modal-link">Forgot password</a>
+                                </div>
+                                <div class="mt-4 text-center pxp-sign-hero-form-small">
+                                    New to WeChatJobs? <a href="{% url 'register' %}">Create an account</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock stylesheets %}

@@ -1,0 +1,1 @@
+default_app_config = 'jobsite.jobsboard.apps.JobsboardConfig'

@@ -1,0 +1,378 @@
+{% extends "../layouts/employer-base.html" %}
+{% load static %}
+
+{% block title %} Edit Employer Profile {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+    .form-control:disabled {
+        background-color: #e9ecef !important;
+    }
+
+    #id_job_types {
+        display: grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
+        row-gap: 10px;
+    }
+
+    @media (max-width: 550px) {
+        #id_job_types {
+        grid-template-columns:repeat(auto-fit,minmax(170px, 1fr));
+        row-gap: 5px;
+        }
+    }
+
+    input[type=checkbox] {
+        transform: scale(1.2);
+    }
+
+    .form-label {
+        font-size: 1rem !important;
+    }
+
+    .errorlist {
+        font-size: 1.2rem;
+    }
+
+
+    #profile-image {
+        margin-top: 10%;
+        height: auto;
+        width: 80%;
+        clip-path: circle();
+    }
+
+    #profile-image-input {
+        padding: 6%;
+    }
+
+    .cropper-view-box {
+        border-radius: 60%;
+    }
+    .cropper-face {
+        background-color:inherit !important;
+    }
+
+    .cropper-buttons {
+        position: absolute;
+        left: 10px;
+        width: 70px;
+        z-index: 9999;
+        font-size: 40px;
+        color: white;
+        background-color: green;
+    }
+
+</style>
+
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond-plugin-media-preview@1.0.11/dist/filepond-plugin-media-preview.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.css" integrity="sha512-087vysR/jM0N5cp13Vlp+ZF9wx6tKbvJLwPO8Iit6J7R+n7uIMMjg37dEgexOshDmDITHYY5useeSmfD1MYiQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock stylesheets %}
+
+{% block innercontent %}
+
+
+<div class="pxp-dashboard-content-details">
+
+    
+{% if messages %}
+    {% for message in messages %}
+        
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success subs-removed-success" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        {% if message.tags == 'info' %}
+        <div class="alert alert-info subs-remove-info" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        {% if message.tags == 'error' %}
+        <div class="alert alert-danger subs-removed-error" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+    {% endfor %}
+{% endif %}
+
+    <h1>Edit Profile</h1>
+    <p class="pxp-text-light">Edit your employer profile page info.</p>
+
+    <form method="post" enctype="multipart/form-data" id="employer-profile-form">
+
+        {% csrf_token %}
+
+        <div class="row">
+            <h4>Edit your profile pic</h4>
+            <div class="col-sm-6" id="profile-image-input">                        
+                <input type="file" class="pond" id="profile-image-uploader" name="profile_pic" />
+            </div>
+
+            <div class="col-sm-6" id="profile-pic-container">
+                <div class="text-center">
+                    
+                    <img src="
+                    {% if request.user.profile_pic %}
+                    {{ request.user.profile_pic.url }}
+                    {% endif %}
+                    "
+                    id="profile-image" alt="profile picture">
+                    
+                </div>
+                <div class="text-center">
+                    <button type="button" id="delete-profile-pic-btn" class="mt-3 btn btn-danger">Delete Profile Pic</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-name" class="form-label">Employer / Recruiter Name</label>
+                    {{ form.name }}
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-email" class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-phone" class="form-label">Whatsapp</label>
+                    {{ form.phone_number }}
+                </div>
+                <span class="text-danger">{{ form.phone_number.errors }}</span>
+            </div>
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-wechat" class="form-label">Wechat ID</label>
+                    {{ form.wechat_id }}
+                </div>
+                <span class="text-danger">{{ form.wechat_id.errors }}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-city" class="form-label">City</label>
+                    {{ form.city }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-country" class="form-label">Country</label>
+                        {{ form.country }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-website" class="form-label">Website</label>
+                        {{ form.website }}
+                </div>
+                <span class="text-danger">{{ form.website.errors }}</span>
+            </div>
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="pxp-employer-size" class="form-label">Company Size</label>
+                    {{ form.company_size }}
+                </div>
+            </div>
+        </div>
+        
+
+
+        <div class="mb-3">
+            <label for="pxp-employer-job-types" class="form-label">Which Types of Jobs Do You Recruit For?</label>
+            
+            {{ form.job_types }}
+
+        </div>
+
+
+        <div class="mb-3">
+            <label for="pxp-employer-about" class="form-label">Tell Potential Candidates Something About You</label>
+            {{ form.intro }}
+        </div>
+
+
+        <div class="mt-4 mt-lg-5">
+            <button type="submit" class="btn rounded-pill pxp-secondary-cta upload-btn">Save Profile</button>
+        </div>
+    </form>
+</div>
+
+{% endblock innercontent %}
+
+
+
+{% block javascript %}
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+
+<script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+
+<script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js" integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'js/cropper.js' %}"></script>
+
+
+<script>
+
+$(document).ready(function() {
+    if($('.alert')){
+        $('.alert').fadeTo(5000, 500).slideUp(500)
+    }
+})
+
+
+FilePond.registerPlugin(
+
+    FilePondPluginImageEdit,
+    FilePondPluginImagePreview,
+    FilePondPluginFileValidateType,
+    FilePondPluginFileValidateSize,
+    FilePondPluginImageTransform,
+
+);
+
+
+
+const profileImg = FilePond.create(
+  document.querySelector('#profile-image-uploader'),{
+    labelIdle: `Drag & Drop your profile pic or <span class="filepond--label-action">Browse</span>`,
+    imagePreviewHeight: 170,
+    stylePanelLayout: 'compact circle',
+    styleLoadIndicatorPosition: 'center bottom',
+    styleProgressIndicatorPosition: 'right bottom',
+    styleButtonRemoveItemPosition: 'left bottom',
+    styleButtonProcessItemPosition: 'right bottom',
+    credits: false,
+    imageEditEditor: editor,
+
+// Error messages not shown for compact circles so just blocked them from adding it
+// Can be updated later
+    dropValidation: true,
+    maxFileSize: '20MB', //Resized post submission anyway
+    acceptedFileTypes: ['image/*'],
+    fileValidateTypeLabelExpectedTypes: 'Should be an image file like .jpg, .png',
+
+    onaddfile: function(error, file) {
+        console.log('File added: [' + error + ']   file: [' + file.id + ']');
+        $('.upload-btn').attr('disabled','');
+    },
+
+    onprocessfile: function(error, file) {
+        console.log('On Process Fired')
+        $('.upload-btn').removeAttr('disabled');
+  
+    },
+
+   
+
+
+
+    server: {
+
+        url: '/fp',
+        patch: '/patch/',
+        revert: '/revert/',
+        fetch: '/fetch/?target=',
+        load: '/load/',
+        restore: '/restore/',
+
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+
+
+        process: {
+                url: '/process/',
+                method: 'POST',
+                headers: {
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                withCredentials: false,
+                ondata: (formData) => {  
+                    
+                    var upload_field = '';
+                    
+                    for (var item of formData.keys()) {
+                        console.log(item)
+                        upload_field = item;
+                        break;
+                    }
+                    if (upload_field !== '') {
+                        formData.append('fp_upload_field',upload_field);
+                    }
+                    return formData;
+                },
+            }
+        }
+})
+
+
+$(document).ready(()=> {
+    if(location.href === $('#profile-image')[0].src){
+        $('#profile-pic-container').hide()
+    }
+})
+
+
+let profile_pic_removed = false
+
+document.querySelector('#employer-profile-form').addEventListener('formdata', e => {
+        //e.preventDefault()
+        console.log(e)
+        console.log('Removed sent')
+        e.formData.set('profile_pic_removed',profile_pic_removed);
+        
+    
+});
+    
+
+
+
+$('#delete-profile-pic-btn').on('click', () => {
+    //Restore generic images
+    $('#profile-pic-container').hide()
+    $('.pxp-dashboard-side-user-nav-avatar')[0].style.backgroundImage = 'url("{% static 'images/wechat-registered.webp' %}")'
+    $('.pxp-user-nav-avatar')[0].style.backgroundImage = 'url("{% static 'images/wechat-registered.webp' %}")'
+    profile_pic_removed = true
+
+    $.ajax({
+        type: 'DELETE',
+        url: '/delete-profile-pic/',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        dataType: 'html'
+    })
+})
+
+</script>
+{% endblock javascript %}

@@ -1,0 +1,3 @@
+web: python manage.py migrate && python manage.py collectstatic --no-input && gunicorn jobsite.wsgi
+
+// sleep 3; celery -A jobsite worker -l info -B && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn jobsite.wsgi

@@ -1,0 +1,242 @@
+{% extends user.candidate|yesno:"jobsboard/layouts/candidate-base.html,jobsboard/layouts/employer-base.html" %}
+{% load static %}
+
+{% block title %}{% endblock title %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block innercontent %}
+<div class="pxp-dashboard-content-details">
+
+    {% if job_post_success %}
+    <div id="custom-alert">
+        <div class="alert alert-success d-flex align-items-center"  role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+            <div>
+            Congrats, your job ad has been successfully posted!
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {% if job_post_updated %}
+    <div id="custom-alert">
+        <div class="alert alert-success d-flex align-items-center"  role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+            <div>
+            Congrats, your job ad has been successfully updated!
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {% if is_draft %}
+    <div id="custom-alert">
+        <div class="alert alert-primary d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+            <div>
+            Your draft job has been saved!
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {% if promoted_removed %}
+    <div id="custom-alert">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+            <div>
+            Your job ad is no longer promoted and has been saved as a draft.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Used by the JS #}
+    <div class="alert alert-danger" id="error-alert" role="alert"></div> 
+
+
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success subs-removed-success" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <h1>{% block h1 %}{% endblock h1 %}</h1>
+    
+    {% if object_list %}
+
+    <p class="pxp-text-light">{% block detailedlist %}{% endblock detailedlist %}</p>
+
+    <div class="mt-4 mt-lg-5">
+        <div class="row justify-content-between ">
+
+            <!-- col-auto order-2 order-sm-1 -->
+            <div class="col-auto">
+                <div class="pxp-{{ user.candidate|yesno:"candidate,company" }}-dashboard-jobs-bulk-actions mb-3">
+
+                    <select class="form-select" id="dropdown">
+                        <option>Bulk actions</option>
+                        {% url 'employer-apps' as e_apps %}
+                        {% url 'job-apps' as c_apps %}
+                        
+                        {% if request.path == e_apps %}
+                        <option>Reset</option>
+                        <option>Approve</option>
+                        <option>Reject</option>
+                        {% endif %}
+                        {% if request.path == c_apps %}
+                        <option>Re-apply</option>
+                        <option>Revoke</option>
+                        {% endif %}
+                        <option>Delete</option>
+                    </select>
+                </div>
+            </div>
+          
+
+
+            <div class="col-auto">
+                <div class="pxp-{{ user.candidate|yesno:"candidate,company" }}-dashboard-jobs-search mb-3">
+                    <div class="pxp-{{ user.candidate|yesno:"candidate,company" }}-dashboard-jobs-search-results me-3">
+                    Showing 
+                    {% if page_obj.paginator.count == 1 %}
+                    1 job
+                    {% else %}
+                    {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} jobs
+                    {% endif %} 
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="">
+            <form action="{% block deleteurl %}{% endblock deleteurl %}" 
+                name="delete-files" class="form-group ml-2" id="delete-files" method="post"> 
+                {% csrf_token %}
+                <div class="mt-4 mb-2" id="delete-area">
+                    <h4 style="color: red;">
+                        Are you sure you want to delete these
+                        {% url 'fav-jobs' as fav_job %}
+                        {% url 'employer-apps' as apps %}
+                        
+                        {% if request.path == fav_job %}
+                        favourites?
+                        {% elif request.path == apps %}
+                        candidates?
+                        {% else %}
+                        job applications?
+                        {% endif %}
+                    </h4>
+                    <button type="submit" id="delete" class="btn btn-sm" style="background:red;">YES, DELETE THEM!</button>
+                    <button type="button" id="undo-form-freeze" class="btn btn-sm" style="background:#42A362">NO, KEEP THEM!</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="table-responsive">
+
+        {% block table %}{% endblock table %}
+           
+        <!-- Pagination -->
+        {% if is_paginated %}
+
+        <div class="row mt-4 mt-lg-5 justify-content-between align-items-center">
+            <div class="col-auto">
+                <nav class="mt-3 mt-sm-0" aria-label="Jobs list pagination">
+                    <ul class="pagination pxp-pagination">
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if i == 1 %}
+                            {% if page_obj.number == i %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ i }}</span>
+                                </li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if i != 1 and i != page_obj.paginator.page_range|last %}
+                            {% if page_obj.number == i %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ i }}</span>
+                                </li>
+                            {% else %}
+                                {% if page_obj.number|add:-3 == i %}
+                                <li class="page-item page-link">...</li>
+                                {% endif %}
+                                {% if page_obj.number|add:2 >= i and page_obj.number|add:-2 <= i %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                                {% if page_obj.number|add:3 == i %}
+                                <li class="page-item page-link">...</li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        {% if i == page_obj.paginator.page_range|last %}
+                            {% if page_obj.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ page_obj.paginator.page_range|last }}</span>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.page_range|last }}">{{ page_obj.paginator.page_range|last }}</a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        {% endif %}
+
+        </div>
+    </div>
+
+    {% else %}
+    <h3 class="mt-5">{% block tableempty %}{% endblock tableempty %}</h3>
+    {% endif %}
+    
+</div>
+
+
+<div class="modal fade" id="delete-warning" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 600px;">
+        <div class="modal-content">
+            <div class="modal-header text-center d-block">
+            <h2 class="modal-title mt-5" id="staticBackdropLabel">You Are About To Delete a Promoted Job!</h2>
+            </div>
+            <div class="modal-body pt-1 d-flex">
+                <img class="me-3" src="{% static 'images/achtung.svg' %}">
+                <div class="d-flex" style="align-items:center;">
+                    <p style="font-size: 1.2rem;">Whoaa, you're about to delete a promoted job! You cannot recover any jobs once they have been deleted. Are you sure you want to do this?</p>
+                </div> 
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn text-white" style="background-color: var(--pxpMainColor);" data-bs-dismiss="modal">No</button>
+                <button id="removed-promoted" name="remove-promoted" type="submit" class="btn text-white" style="background-color: var(--pxpDarkGrayColor);" >Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock innercontent %}
+
+
+
+{% block javascript %}
+<script src="{% static 'js/listview.js' %}"></script>
+{% endblock javascript %}
+

@@ -1,0 +1,182 @@
+{% extends "../layouts/table-base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+<style>
+#delete-area{
+    display: none;
+    visibility: hidden;
+    color: white;
+}
+
+#delete-area button{
+    color: white;
+    font-weight: 700;
+}
+
+
+/* Turn off all pointer events when disabled */
+button:disabled {
+    opacity: 50%;
+    pointer-events: none;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block title %}Candidates{% endblock title %}
+
+{% block h1 %}Candidates{% endblock h1 %}
+
+{% block detailedlist %}Detailed list of all the candidates that have applied for your job.{% endblock detailedlist %}
+
+{% block deleteurl %}{% url 'delete-job-app' %}{% endblock deleteurl %}
+
+{% block tableempty %}Noone has submitted an application yet.{% endblock tableempty %}
+
+{% block noneselected %}a candidate{% endblock noneselected %}
+
+{% block table %}
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th class="pxp-is-checkbox" style="width: 1%;"><input type="checkbox" id="select-all-items" class="form-check-input"></th>
+            <th style="width: 25%;">Name</th>
+            <th style="width: 20%;">Applied For</th>
+            <th style="width: 12%;">Status</th>
+            <!-- <th style="width: 15%;">Applications</th> -->
+            <th style="width: 25%;">Application Date
+            {% if jobs|length > 1 %}
+                {% if order == 'A' %}
+                    <a href="{% url 'employer-apps' %}">
+                    <span class="fa fa-angle-up ms-3 fa-2x" style="vertical-align: sub;"></span>
+                    </a>
+                {% else %}
+                    {# This the default ordering #}
+                    <a href="{% url 'employer-apps' %}?order=A">
+                    <span class="fa fa-angle-down fa-2x ms-2" style="vertical-align: sub;"></span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            </th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for job in jobs %}
+        <h1>PK: {{ job.pk }}</h1>
+        <tr id="row-{{ forloop.counter }}" data-pk="{{ job.pk }}">
+            <td><input type="checkbox" class="form-check-input checkbox" id="{{ job.candidate.pk }}" value="{{ job.pk }}" name="pks" form="delete-files"></td>
+            <td>
+                <a href="{% url 'view-candidate' job.candidate.pk %}">
+                    <div class="pxp-company-dashboard-job-title">{{ job.candidate.user.first_name }}</div>
+                    <div class="pxp-company-dashboard-job-location">
+                        {% if job.candidate.country %}
+                        <img src="{{ job.candidate.country.flag }}" alt="{{ job.candidate.country.name }} flag"> {{ job.candidate.country.name }}
+                        {% else %}
+                        Unknown
+                        {% endif %}
+                    </div>
+                </a>
+            </td>
+
+            <td>
+                <div class="pxp-company-dashboard-job-category">
+                    <div>{{ job }}</div>
+                    <a href="{% url 'job' job.job.pk %}">{{ job.job.job_title }}</a>
+                </div>
+            </td>
+
+            
+            <td>
+                <div class="pxp-company-dashboard-job-status">
+                    <span class="badge rounded-pill
+                    {% if job.status == 'pending' %}
+                        bg-secondary">Pending
+                    {% elif job.status == 'approved' %}
+                        bg-success">Approved
+                    {% elif job.status == 'revoked' %}
+                        bg-warning" title="Revoked by candidate">Revoked
+                    {% else %}
+                        bg-danger">Rejected
+                    {% endif %}
+                    </span>
+                </div>
+            </td>
+
+
+            <td><div class="pxp-company-dashboard-job-date mt-1">{{ job.time_created }}</div></td>
+            
+            <td>
+                <div class="pxp-dashboard-table-options">
+                    <ul class="list-unstyled">
+
+                        <a href="{% url 'view-candidate' job.candidate.pk %}">
+                            <li>
+                                <button title="View"><span class="fa fa-eye"></span></button>
+                            </li>
+                        </a>
+                        
+                        
+                        <li><button title="Approve" class="approved" {% if job.status == 'revoked' %}disabled{% endif %}><span class="fa fa-check"></span></button></li>
+                        <li><button title="Reject" class="rejected" {% if job.status == 'revoked' %}disabled{% endif %}><span class="fa fa-ban"></span></button></li>
+                        
+
+                        <form method="post" action="{% url 'delete-job-app' job.pk %}">
+                            {% csrf_token %} 
+                            <li>
+                                <input type="hidden" title="Delete" />
+                                <button type="submit">
+                                    <span class="fa fa-trash-o" ></span>
+                                </button>
+                            </li>
+                        </form>
+
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock table %}
+
+
+{% block javascript2 %}
+<script>
+const csrftoken = '{{ csrf_token }}';
+
+
+// Handles approved and rejected app statuses on candidates page
+$(document).on('click', '.approved', updateAppStatus)
+$(document).on('click', '.rejected', updateAppStatus)
+
+function updateAppStatus(e) {
+    console.log('Fired!')
+    e.preventDefault()
+
+    console.log(this.classList[0])
+    console.log(this.closest('tr'))
+    console.log(`PK: ${this.closest('tr').dataset.pk}`)
+
+    $.ajax({
+            type: 'POST',
+            url: '/update-app-status/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                status: this.classList[0],
+                pk: this.closest('tr').dataset.pk
+            },
+            dataType: 'html',
+        });
+
+    const el = $(`#${this.closest('tr').id} .pxp-company-dashboard-job-status span`)
+        .removeClass(['bg-success','bg-danger','bg-secondary'])
+    if(this.classList[0] == 'approved'){
+        el.addClass('bg-success').html('Approved')
+    } else {
+        el.addClass('bg-danger').html('Rejected')
+    }    
+}
+</script>
+{% endblock javascript2 %}

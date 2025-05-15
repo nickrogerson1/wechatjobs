@@ -1,0 +1,488 @@
+/*Stops weird overflow for /add/ */
+html, body {
+    overflow-x: hidden;
+}
+.bg-pxp-main-color-light{
+    background-color: var(--pxpMainColorLight);
+}
+.highlighted {
+    color: red;
+    font-weight: 700;
+}
+.applied {
+    background-color:var(--pxpDarkGrayColor);
+}
+.applied:hover {
+    background-color:#6b6868;
+}
+.bg-warning:hover {
+    background-color:#e3ac07 !important;
+}
+
+
+/* Admin View */
+.admin-cb {
+    transform: scale(1.5);
+}
+.top-unit {
+    margin: 2px 10px;
+}
+.leaderboard {
+    margin-bottom: 5px;
+}
+.container {
+    display: flex;
+}
+.checkbox {
+    transform: scale(1.3);
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.flex-container {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+.flex-container > h3 {
+    margin-right: 30px;
+}
+.wx-alias-label {
+    font-size:1.2rem;
+    font-weight:500;
+}
+.wx-alias-input {
+    border: 1px solid black;
+}
+
+
+/* Advanced Search Toggle Button */
+#model-23 {
+    margin-top: 10px;
+    display: inline-block
+}
+#model-23 .card{
+    flex-direction: row;
+}
+
+#model-23 .toggle {
+    position: relative;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+#model-23 .toggle input[type="checkbox"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+#model-23 .toggle input[type="checkbox"]:checked + label:before {
+    background: #77c2bb;
+}
+#model-23 .toggle input[type="checkbox"]:checked + label:after {
+    box-shadow: inset 0 0 0 20px var(--pxpMainColor), 0 0 0 5px #fff;
+    border-color: #009688;
+    left: 36px;
+}
+#model-23 .toggle label {
+    position: relative;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    box-sizing: border-box;
+}
+#model-23 .toggle label:before {
+    content: "";
+    background: #bbb;
+    border-radius: 4px;
+    height: 5px;
+    width: 64px;
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    transition: 0.2s ease-in;
+}
+#model-23 .toggle label:after {
+    content: "";
+    position: absolute;
+    background: #fff;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    z-index: 2;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 4px #bbb, 0 0 0 5px #fff;
+    transition: 0.2s ease-in;
+}
+
+#option-text {
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#advanced-options {
+    display: none;
+}
+
+
+
+/* Automcomplete Search */
+.autocomplete {
+/*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+    width: 300px;
+}
+input {
+    border: 1px solid transparent;
+    padding: 10px;
+    font-size: 1rem;
+}
+input[type=text] {
+    width: 100%;
+    border-radius: 30px;
+}
+
+.wx-input:focus, .wx-input:focus-visible {
+    border: 1px solid var(--pxpLightGrayColor);
+}
+
+input:focus{
+    outline: none;
+}
+
+input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+}
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+/*when hovering an item:*/
+    background-color: #e9e9e9;
+}
+.autocomplete-active {
+/*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+.fa {
+    color: var(--pxpMainColor)
+}
+
+#promoted{
+    font-size: 1.2rem;
+}
+
+
+/* Search Box Radio Buttons */
+.radio-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.radio-button {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transform-origin: left;
+}
+
+.radio-button__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-button__label {
+    display: inline-block;
+    padding-left: 30px;
+    margin-bottom: 5px;
+    position: relative;
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.radio-button__custom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    transition: all 0.3s ease;
+}
+
+.radio-button__input:checked + .radio-button__label .radio-button__custom {
+    background-color: var(--pxpMainColor);
+    border-color: transparent;
+    transform: scale(0.8);
+    box-shadow: 0 0 20px #4c8bf580;
+}
+
+.radio-button__input:checked + .radio-button__label {
+    color: var(--pxpMainColor);
+}
+
+.radio-button{
+    transition: transform 0.5s;
+}
+
+
+
+
+
+/* Like Button */
+@media (min-width: 768px) {
+    .like-apply-container{
+        margin-left: auto;
+    }
+}
+.like-button-container {
+    padding-right: 0;
+  }   
+svg {
+    cursor: pointer;
+    overflow: visible;
+    width: 100px;
+}
+svg .heart {
+    transform-origin: center;
+    animation: animateHeartOut 0.3s linear forwards;
+}
+svg .main-circ {
+    transform-origin: 29.5px 29.5px;
+}  
+.like-button {
+    display: none;
+}  
+.like-button:checked + label svg .heart {
+    transform: scale(0.2);
+    fill: #E2264D;
+    animation: animateHeart 0.3s linear forwards 0.25s;
+}
+.like-button:checked + label svg .main-circ {
+    transition: all 2s;
+    animation: animateCircle 0.3s linear forwards;
+    opacity: 1;
+}
+.like-buttonchecked + label svg .grp1 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp1 .oval1 {
+    transform: scale(0) translate(0, -30px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp1 .oval2 {
+    transform: scale(0) translate(10px, -50px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp2 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp2 .oval1 {
+    transform: scale(0) translate(30px, -15px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp2 .oval2 {
+    transform: scale(0) translate(60px, -15px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp3 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp3 .oval1 {
+    transform: scale(0) translate(30px, 0px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp3 .oval2 {
+    transform: scale(0) translate(60px, 10px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp4 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp4 .oval1 {
+    transform: scale(0) translate(30px, 15px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp4 .oval2 {
+    transform: scale(0) translate(40px, 50px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp5 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp5 .oval1 {
+    transform: scale(0) translate(-10px, 20px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp5 .oval2 {
+    transform: scale(0) translate(-60px, 30px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp6 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp6 .oval1 {
+    transform: scale(0) translate(-30px, 0px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp6 .oval2 {
+    transform: scale(0) translate(-60px, -5px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp7 {
+    opacity: 1;
+    transition: 0.1s all 0.3s;
+}
+.like-button:checked + label svg .grp7 .oval1 {
+    transform: scale(0) translate(-30px, -15px);
+    transform-origin: 0 0 0;
+    transition: 0.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp7 .oval2 {
+    transform: scale(0) translate(-55px, -30px);
+    transform-origin: 0 0 0;
+    transition: 1.5s transform 0.3s;
+}
+.like-button:checked + label svg .grp2 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+.like-buttonchecked + label svg .grp3 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+.like-button:checked + label svg .grp4 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+.like-button:checked + label svg .grp5 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+.like-button:checked + label svg .grp6 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+.like-button:checked + label svg .grp7 {
+    opacity: 1;
+    transition: 0.1s opacity 0.3s;
+}
+  
+@keyframes animateCircle {
+    40% {
+      transform: scale(10);
+      opacity: 1;
+      fill: #DD4688;
+    }
+    55% {
+      transform: scale(11);
+      opacity: 1;
+      fill: #D46ABF;
+    }
+    65% {
+      transform: scale(12);
+      opacity: 1;
+      fill: #CC8EF5;
+    }
+    75% {
+      transform: scale(13);
+      opacity: 1;
+      fill: transparent;
+      stroke: #CC8EF5;
+      stroke-width: 0.5;
+    }
+    85% {
+      transform: scale(17);
+      opacity: 1;
+      fill: transparent;
+      stroke: #CC8EF5;
+      stroke-width: 0.2;
+    }
+    95% {
+      transform: scale(18);
+      opacity: 1;
+      fill: transparent;
+      stroke: #CC8EF5;
+      stroke-width: 0.1;
+    }
+    100% {
+      transform: scale(19);
+      opacity: 1;
+      fill: transparent;
+      stroke: #CC8EF5;
+      stroke-width: 0;
+    }
+  }
+  @keyframes animateHeart {
+    0% {
+      transform: scale(0.2);
+    }
+    40% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes animateHeartOut {
+    0% {
+      transform: scale(1.4);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }

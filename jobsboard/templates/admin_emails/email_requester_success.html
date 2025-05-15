@@ -1,0 +1,29 @@
+<h3>This is to let you know that your request for the following WeChat ID has been successful:</h3>
+<h2>Poster Details</h2>
+<p style="font-size: 1rem;"><strong>Handle{{ poster_handles|pluralize }}</strong>: 
+    {% for p in poster_handles %}
+        {% if forloop.last %}
+            {{ p }}
+        {% else %}
+            {{ p }},
+        {% endif %} 
+    {% endfor %}
+</p>
+<p style="font-size: 1rem;"><strong>Wechat ID{{ wx_alias|pluralize }}</strong>: 
+    {% for w in wx_alias  %}
+        {% if forloop.last %}
+            {{ w }}
+        {% else %}
+            {{ w }},
+        {% endif %} 
+    {% endfor %}
+</p>
+
+<h3>Jobs Associated With This Job Poster:</h3>
+{% for job in jobs %}
+<h4>{{ forloop.counter }}. <a href="https://wechatjobs.com/job/{{ job.pk }}/">
+    {{ job.job_description|truncatechars:100 }}
+    </a>
+</h4>
+{% endfor %}
+

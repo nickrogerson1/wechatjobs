@@ -1,0 +1,127 @@
+{% extends "./backend-base.html" %}
+{% load static %}
+
+{% block content %}
+
+<body style="background-color: var(--pxpMainColorLight);">
+    <div class="pxp-preloader"><span>Loading...</span></div>
+
+    <div class="pxp-dashboard-side-panel d-none d-lg-block">
+        <div class="pxp-logo">
+            <a href="/">
+                <img style="height:45px; width:225px;" src="{% static  'images/wechatjobs-logo.svg' %}" id="logo" alt="wechatjobs logo">
+            </a>
+        </div>
+
+        <nav class="mt-3 mt-lg-4 d-flex justify-content-between flex-column pb-100">
+            <div class="pxp-dashboard-side-label">Admin tools</div>
+            <ul class="list-unstyled">
+                {% with url_name=request.resolver_match.url_name %}
+                <li class="{% if url_name == 'view-candidate' %}pxp-active{% endif %}"><a href="{% url 'view-candidate' %}"><span class="fa fa-home"></span>My Profile</a></li>
+                <li class="{% if url_name == 'edit-candidate' %}pxp-active{% endif %}"><a href="{% url 'edit-candidate' %}"><span class="fa fa-pencil"></span>Edit Profile</a></li>
+                <li class="{% if url_name == 'edit-candidate-media' %}pxp-active{% endif %}"><a href="{% url 'edit-candidate-media' %}"><span class="fa fa-photo"></span>Edit Media</a></li>
+                <li class="{% if url_name == 'job-apps' %}pxp-active{% endif %}"><a href="{% url 'job-apps' %}"><span class="fa fa-file-text-o"></span>Applications</a></li>
+                <li class="{% if url_name == 'fav-jobs' %}pxp-active{% endif %}"><a href="{% url 'fav-jobs' %}"><span class="fa fa-heart-o"></span>Favourite Jobs</a></li>
+                <li class="{% if url_name == 'contact' %}pxp-active{% endif %}"><a href="{% url 'contact' %}"><span class="fa fa-envelope"></span>Contact Support</a></li>
+                <li class="{% if url_name == 'change-password' %}pxp-active{% endif %}"><a href="{% url 'change-password' %}"><span class="fa fa-lock"></span>Change Password</a></li>
+                {% endwith %}
+            </ul>
+        </nav>
+
+        <nav class="pxp-dashboard-side-user-nav-container pxp-is-candidate">
+            <div class="pxp-dashboard-side-user-nav">
+                <div class="dropdown pxp-dashboard-side-user-nav-dropdown dropup">
+                    <a role="button" class="dropdown-toggle" data-bs-toggle="dropdown">
+                        
+                        <div class="pxp-dashboard-side-user-nav-avatar pxp-cover" style="background-image: url(
+                        {% if request.user.profile_pic %}
+                        {{ request.user.profile_pic.url }}
+                        {% else %}
+                        {% static 'images/candidate-default.webp' %}
+                        {% endif %}
+                        );"></div>
+                        <div class="pxp-dashboard-side-user-nav-name">{{ user.first_name }}</div>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'view-candidate' %}">My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit-candidate' %}">Edit profile</a></li>
+                        <li id="logout" class="dropdown-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Logout">
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="pxp-dashboard-content">
+        <div class="pxp-dashboard-content-header pxp-is-candidate">
+            <div class="pxp-nav-trigger navbar pxp-is-dashboard d-lg-none">
+                <a role="button" data-bs-toggle="offcanvas" data-bs-target="#pxpMobileNav" aria-controls="pxpMobileNav">
+                    <div class="pxp-line-1"></div>
+                    <div class="pxp-line-2"></div>
+                    <div class="pxp-line-3"></div>
+                </a>
+                <div class="offcanvas offcanvas-start pxp-nav-mobile-container pxp-is-dashboard pxp-is-candidate" tabindex="-1" id="pxpMobileNav">
+                    <div class="offcanvas-header">
+                        <div class="pxp-logo">
+                            <a href="/">
+                                <img src="{% static  'images/wechatjobs-logo.svg' %}" id="logo" alt="wechatjobs logo" width="200">
+                            </a>
+                        </div>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <nav class="pxp-nav-mobile">
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li class="pxp-dropdown-header">Admin tools</li>
+                                <li class="nav-item"><a href="{% url 'view-candidate' %}"><span class="fa fa-home"></span>My Profile</a></li>
+                                <li class="nav-item"><a href="{% url 'edit-candidate' %}"><span class="fa fa-pencil"></span>Edit Profile</a></li>
+                                <li class="nav-item"><a href="{% url 'edit-candidate-media' %}"><span class="fa fa-photo"></span>Edit Media</a></li>
+                                <li class="nav-item"><a href="{% url 'job-apps' %}"><span class="fa fa-file-text-o"></span>Applications</a></li>
+                                <li class="nav-item"><a href="{% url 'fav-jobs' %}"><span class="fa fa-heart-o"></span>Favourite Jobs</a></li>
+                                <li class="nav-item"><a href="{% url 'contact' %}"><span class="fa fa-envelope"></span>Contact Support</a></li>
+                                <li class="nav-item"><a href="{% url 'change-password' %}"><span class="fa fa-lock"></span>Change Password</a></li>
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <nav class="pxp-user-nav pxp-on-light">
+                <div class="dropdown pxp-user-nav-dropdown pxp-user-notifications">
+
+
+                <div class="dropdown pxp-user-nav-dropdown">
+                    <a role="button" class="dropdown-toggle" data-bs-toggle="dropdown">
+                        
+                        <div class="pxp-user-nav-avatar pxp-cover" style="background-image: url(
+                            {% if request.user.profile_pic %}
+                            {{ request.user.profile_pic.url }}
+                            {% else %}
+                            {% static 'images/candidate-default.webp' %}
+                            {% endif %}
+                        );"></div>
+                        
+                        <div class="pxp-user-nav-name d-none d-md-block">{{ user.first_name }}</div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'view-candidate' %}">My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit-candidate' %}">Edit profile</a></li>
+                        <li id="logout" class="dropdown-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <input class="fw-light" type="submit" value="Logout">
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+
+{% block innercontent %}{% endblock innercontent %}
+
+{% endblock content %}

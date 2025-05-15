@@ -1,0 +1,131 @@
+{% extends "../layouts/table-base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+<style>
+#delete-area{
+    display: none;
+    visibility: hidden;
+    color: white;
+}
+
+#delete-area button{
+    color: white;
+    font-weight: 700;
+}
+
+</style>
+{% endblock stylesheets %}
+
+{% block title %} Favourite Jobs {% endblock title %}
+
+{% block h1 %}Favourite Jobs{% endblock h1 %}
+
+{% block detailedlist %}Detailed list of your favourite jobs.{% endblock detailedlist %}
+
+{% block deleteurl %}{% url 'create-delete-like' %}{% endblock deleteurl %}
+
+{% block tableempty %}You've still not liked any jobs yet!{% endblock tableempty %}
+
+{% block table %}
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th class="pxp-is-checkbox" style="width: 1%;"><input type="checkbox" id="select-all-items" class="form-check-input"></th>
+            <th>Job</th>
+            <th>Company</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th colspan="2">Date Added
+            {% if jobs|length > 1 %}
+                {% if order == 'A' %}
+                    <a href="{% url 'fav-jobs' %}">
+                    <span class="fa fa-angle-up ms-3 fa-2x" style="vertical-align: sub;"></span>
+                    </a>
+                {% else %}
+                    {# This the default ordering #}
+                    <a href="{% url 'fav-jobs' %}?order=A">
+                    <span class="fa fa-angle-down fa-2x ms-2" style="vertical-align: sub;"></span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for job in jobs %}
+        <tr>
+            <td><input type="checkbox" class="form-check-input checkbox" id="{{ job.pk }}" value="{{ job.pk }}" name="pks" form="delete-files"></td>
+            <input type="hidden" form="delete-files" name="bulk-delete" />
+            <td>
+                <a href="{% url 'job' job.job.pk %}">
+                    <div class="pxp-candidate-dashboard-job-title">
+                        {% if job.job.title %}
+                            {{ job.job.job_title|truncatewords:10 }}
+                        {% else %}
+                            {{ job.job.job_description|truncatechars:30 }}
+                        {% endif %}
+                    </div>
+                    <div class="pxp-candidate-dashboard-job-location">
+                        <span class="fa fa-globe me-1"></span>
+                            {% if job.job.cities|length > 5 %}
+                            Everywhere
+                        {% else %} 
+                            {% for city in job.job.cities %}
+                            {{ city|title }}{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                            {% empty %}
+                            N/A
+                            {% endfor %}
+                        {% endif %}
+                        
+                    </div>
+                </a>
+            </td>
+            <td>
+                {% if job.job.employer %}
+                <a href="{% url 'view-employer' job.job.employer.pk %}" class="pxp-candidate-dashboard-job-company">{{ job.job.employer }}</a>
+                {% else %} 
+                    {{ job.job.wx_handle.handle }} 
+                {% endif %}
+            </td>
+            <td>
+                <div class="pxp-candidate-dashboard-job-category">
+                    {% for type in job.job.job_types %}
+                        {{ type|title }}{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                        {% empty %}
+                        N/A
+                    {% endfor %}
+                </div>
+            </td>
+            <td>
+                <div class="pxp-candidate-dashboard-job-type">
+                    {% if job.job.employment_type %} {{ job.job.employment_type }} {% else %} Unknown {% endif %}
+                </div>
+            </td>
+            <td><div class="pxp-candidate-dashboard-job-date mt-1">{{job.job.time_created }}</div></td>
+            <td>
+                <div class="pxp-dashboard-table-options">
+                    <ul class="list-unstyled">
+                        <a href="{% url 'job' job.job.pk %}"><li><button title="View"><span class="fa fa-eye"></span></button></li></a>
+                      
+                        <form method="post" action="{% url 'create-delete-like' %}" id="single-delete-{{ forloop.counter }}">
+                        <input type="hidden" form="single-delete-{{ forloop.counter }}" name="pks" value="{{ job.pk }}" />
+                        <input type="hidden" form="single-delete-{{ forloop.counter }}" name="bulk-delete" />
+                            {% csrf_token %} 
+                            <li>
+                                <input type="hidden" title="Delete" />
+                                <button type="submit" class="delete-fav-job">
+                                    <span class="fa fa-trash-o" ></span>
+                                </button>
+                            </li>
+                        </form>
+                        
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock table %}

@@ -1,0 +1,458 @@
+{% extends "../layouts/employer-base.html" %}
+{% load static %}
+
+
+{% block title %}
+{% url 'post-job' as post_job %}
+{% if request.path == post_job %}
+ Post a New Job 
+{% else %}
+Edit Your Job
+{% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+
+    #id_job_types {
+        display: grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
+        row-gap: 10px;
+    }
+
+    @media (max-width: 550px) {
+        #id_job_types {
+        grid-template-columns:repeat(auto-fit,minmax(170px, 1fr));
+        row-gap: 5px;
+        }
+    }
+
+    #live-warning {
+        color: red;
+        text-align: center;
+        font-size: 2.5rem;
+    }
+
+</style>
+{% endblock stylesheets %}
+
+{% block innercontent %}
+
+
+<div class="pxp-dashboard-content-details">
+
+    {% if messages %}
+        {% for message in messages %}
+
+            {% if message.tags == 'error' %}
+            <div class="alert alert-danger" id="error-alert" role="alert">
+                    {{ message }}
+            </div>
+            {% endif %}
+
+            {% if message.tags == 'info' %}
+            <div class="alert alert-info subs-remove-info me-4" role="alert">
+                    {{ message }}
+            </div>
+            {% endif %}
+
+        {% endfor %}
+    {% endif %}
+
+
+    {% if request.path != post_job and not is_draft %}
+    <h2 id="live-warning">You are editing a live job!</h2>
+    {% endif %}
+
+    
+    {% if request.path == post_job %}
+    <h1>Post a New Job</h1>
+    <p class="pxp-text-light">Add a new job to your company's jobs' list.</p>
+    {% else %}
+    <h1>Edit Your Job</h1>
+    <p class="pxp-text-light">You can modify your job and then publish it or save it as a draft.</p>
+    {% endif %}
+
+    <form method="post" id="main-form">
+        {% csrf_token %}
+
+        <span class="text-danger">{{ form.non_field_errors }}</span>
+
+            <div class="col-xxl-10">
+                <div class="mb-3">
+                    <label for="pxp-company-job-title" class="form-label">Job Title 职称</label>
+                    <span  id="job-title-errors" class="text-danger">{{ form.job_title.errors }}</span>
+                    {{ form.job_title }}
+                </div>
+            </div>
+
+
+
+        <div class="mb-3">
+            <label for="pxp-company-job-description" class="form-label">Job Description 职位描述</label>
+            <span id="job-description-errors" class="text-danger">{{ form.job_description.errors }}</span>
+            {{ form.job_description }}
+        </div>
+
+
+        <div class="mb-5">
+            <label for="pxp-company-job-type" class="form-label">Job Types 工作类型</label>
+            <span id="job-types-errors" class="text-danger">{{ form.job_types.errors }}</span>
+            {{ form.job_types }} 
+        </div>
+
+        <hr>
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mb-3">
+            {% comment %} d-flex justify-content-center align-items-center flex-column text-center" {% endcomment %}
+           
+                <h4 class="me-5 mb-0">Optional fields 可选字段</h4>
+           
+                <p class="mb-0">给你的申请人更多的信息</p>
+        </div>
+
+        <div class="row">
+            <div class={% if not form.subjects.value %}"col-xxl-6"{% else %}"col-md-6"{% endif %} id="location-container">
+                <label for="pxp-company-job-location" class="form-label">    
+                    Location{% if ',' in form.cities.field.widget.attrs.value %}s{% endif %} 城市 (comma-separated 用逗号分裂)
+                </label>
+                <span id="cities" class="text-danger">{{ form.cities.errors }}</span>
+                {{ form.cities }}
+            </div>
+
+            <div class="col-md-6" id="subject-container" {% if not form.subjects.value %} style="display: none;" {% endif %} >
+                <div class="mb-3">
+                    <label for="pxp-company-subjects" class="form-label">Subjects 学科 (comma-separated 用逗号分裂)</label>
+                    <span id="subjects" class="text-danger">{{ form.subjects.errors }}</span>
+                    {{ form.subjects }} 
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="row">
+
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-experience" class="form-label">Experience 工作经验</label>
+                    {{ form.experience }}
+                </div>
+            </div>
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-type" class="form-label">Employment Type 合同类型</label>
+                    {{ form.employment_type }}
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-salary" class="form-label">Salary Lower Range 薪水底层 (¥)</label>
+                    {{ form.salary_lower_range }}
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-salary" class="form-label">Salary Upper Range 薪水高层 (¥)</label>
+                    {{ form.salary_upper_range }}
+                </div>
+            </div>
+
+
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-accommodation" class="form-label">Accommodation 住宿</label>
+                    {{ form.accommodation }}
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-start_date" class="form-label">Start Date 始期</label>
+                    {{ form.start_date }}
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-contract_length" class="form-label">Contract Length 合同期限</label>
+                    {{ form.contract_length }}
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-pay_settlement_date" class="form-label">Pay Settlement Date 发工资日期</label>
+                    {{ form.pay_settlement_date }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4 mt-lg-5">
+        
+            <button type=
+            {% if max_promoted_jobs_exceeded or is_promoted %}
+            "submit"
+            {% else %}
+            "button" 
+            {% endif %}
+            id="publish-btn" class="btn rounded-pill pxp-secondary-cta"
+            {% if request.path == post_job or is_draft %}
+            name="free-post">Publish Job
+            {% else %}
+            name="post-updated">Update Job
+            {% endif %}</button>
+
+
+            <button type=
+            {% if is_promoted %}
+            "button" 
+            {% else %}
+            "submit" 
+            {% endif %}
+
+            id="save-draft" class="btn rounded-pill pxp-secondary-cta-o ms-3"
+            {% if request.path == post_job %}
+            name="draft-post"> Save Draft
+            {% elif is_draft %}
+            name="draft-post"> Update Draft 
+            {% else %}
+            name="unpublish"> Unpublish & Save Draft
+            {% endif %}</button>
+     
+            
+        </div>
+ 
+
+        
+
+
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header text-center d-block">
+                <h1 class="mt-5" id="staticBackdropLabel">Promote Your Ad</h1>
+                </div>
+
+                <div class="modal-body d-flex pt-2">
+                    <img class="me-3" src="{% static 'images/loud-speaker.svg' %}">
+                    <div class="d-flex align-middle" style="align-items:center;">
+                    <div style="font-size: 1.5rem;">Do you want to promote this job for 7 days for just ¥300?</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                <button name=
+                {% if is_draft or new_post %}
+                "free-post"
+                {% else %}
+                "post-updated"
+                {% endif %}
+                 type="submit" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+
+                
+                <!-- Send to stripe -->
+                <button name="paid-post" type="submit" class="btn btn-primary" style="background-color: var(--pxpMainColor);">Yes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+       
+
+
+
+
+        {% if is_promoted %}
+        <div class="modal fade" id="draft-warning" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 600px;">
+                <div class="modal-content">
+                    <div class="modal-header text-center d-block">
+                    <h2 class="modal-title mt-5" id="staticBackdropLabel">You Are About To Unpublish a Promoted Job!</h2>
+                    </div>
+                    <div class="modal-body pt-1 d-flex">
+                        <img class="me-3" src="{% static 'images/achtung.svg' %}">
+                        <div class="d-flex align-middle" style="align-items:center;">
+                            <p style="font-size: 1.2rem;">If you unpublish this job, then it will automatically lose its promoted status. Are you sure you want to do this?</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn text-white" style="background-color: var(--pxpMainColor);" data-bs-dismiss="modal">No</button>
+                        <button name="remove-promoted" type="submit" class="btn text-white" style="background-color: var(--pxpDarkGrayColor);" >Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+    </form>
+
+
+
+
+  
+
+
+{% endblock innercontent %}
+
+
+{% block javascript %}
+
+<script>
+
+$(document).ready(function() {
+    if($('.alert')){
+        $('.alert').fadeTo(5000, 500).slideUp(500)
+    }
+    checkTeacherChecked()
+})
+
+
+// Display subjects when necessary
+$('#id_job_types').on('change', checkTeacherChecked)
+
+
+// JS to handle subject container display
+const TEACHING_INDEXES = ['teacher', 'online teacher']
+
+function checkTeacherChecked(){
+// Create an array of the checkboxes selected
+const checked = [...$('#id_job_types input:checked').map(function() {return $(this).val()})]
+
+// Display subjects if teacher or online teacher selected
+    if(TEACHING_INDEXES.some(v => checked.indexOf(v) !== -1)){
+        $('#subject-container').show()
+        $('#location-container').addClass('col-md-6')
+    } else {
+        $('#id_subjects').val('')
+        $('#subject-container').hide()
+        $('#location-container').removeClass('col-md-6')
+    }
+
+    if($('#job-type-errors').text()){
+        $('#job-type-errors').text('')
+    }
+}
+
+
+
+$('#id_job_description, #id_job_title, #id_cities, #id_subjects').on('keyup', function() {
+    if($(this).prev().children()){
+        $(this).prev().children().remove()
+   }
+})
+
+
+$('#id_job_types input').on('change', function(){
+    $('#job-types-errors .errorlist').remove()
+})
+
+
+
+{% if is_promoted %}
+$('#save-draft').on('click', function(){
+ $('#draft-warning').modal('show');
+})
+{% endif %}
+
+
+// Modal and submission
+// Only implement this check if it's a new post
+if($("#publish-btn")[0].type === 'button'){
+
+    $('#publish-btn').on('click', function(e) {
+    
+        let jobTitleFailed = false
+        let jobDescFailed = false
+        let jobTypeFailed = false
+
+
+        if(doWordCount('#id_job_title', 'title', 10, 10)) {
+            console.log('invalid job title fired!')
+            jobTitleFailed = true
+        }
+
+
+        if(doWordCount('#id_job_description', 'description', 10, 20)) {
+            console.log('invalid job desc fired!')
+            jobDescFailed = true
+        }
+
+
+        if(!$("#id_job_types input:checked").length){
+            const errors = $('#job-types-errors')
+
+            if(!$('#job-types-errors').text()){
+                const html = `<ul class="errorlist">
+                <li><strong>You need to select at least one type of job!</strong></li></ul>`
+                errors.append(html)
+            }
+            jobTypeFailed = true
+        }
+
+        if(jobTitleFailed){
+            $('#id_job_title').trigger('focus')
+            console.log('Job Title Failed')
+
+        } else if(jobDescFailed){
+            $('#id_job_description').trigger('focus')
+            console.log('Job Desc Failed')
+
+        } else if(jobTypeFailed){
+            $('#id_job_types_0').trigger('focus')
+            console.log('Job Type Failed')
+
+        } else {
+            $('#staticBackdrop').modal('show');
+            console.log('Modal fired!')
+        }
+
+    })
+}
+
+
+
+function doWordCount(id, fieldText, chinese_word_count, latin_word_count){
+ // console.log(e)
+    const text = $(id).val().trim()
+    const chinese_check = text.match(/[\u3400-\u9FBF]/g)
+    const errors = $(`#job-${fieldText}-errors`)
+
+    console.log(`CHINESE CHECK: ${chinese_check}`)
+    console.log(chinese_check)
+
+
+    // First check for Chinese characters
+    if(chinese_check && chinese_check.length < chinese_word_count){
+        console.log('Inside chinese check')
+        // Only add text if there is none
+        if(!errors.children().length){
+            const html = `<ul class="errorlist">
+            <li>你写得太少了， 多写一点啊!</li></ul>`
+            errors.append(html)
+        }
+        console.log(`Less than ${chinese_word_count} characters entered!`)
+        return true
+    } 
+    
+    const latinLength = text.length ? text.split(' ').length : 0
+    if(latinLength < latin_word_count) {
+        if(!errors.children().length){
+            const html = '<ul class="errorlist"><li><strong>' +
+            (text.length ?  `You only wrote ${latinLength} word${latinLength === 1 ? '': 's'}.` : 'You wrote nothing!')
+            + ` Your job ${fieldText} needs to be more than ${latin_word_count} words in length!</strong></li></ul>`
+            errors.append(html)
+        }
+        
+        console.log(`Less than ${latin_word_count} words written`)
+        return true
+    }
+
+    return false
+}
+
+</script>
+{% endblock javascript %}

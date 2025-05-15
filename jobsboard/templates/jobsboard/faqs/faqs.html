@@ -1,0 +1,45 @@
+{% extends "jobsboard/layouts/base.html" %}
+{% load static %}
+
+{% block title %} WechatJobs FAQs {% endblock %}
+
+{% block content %}
+<section class="mt-100 pxp-no-hero">
+    <h2 class="pxp-section-h2 text-center">Frequently Asked Questions</h2>
+    <p class="pxp-text-light text-center">Read through our FAQs and see if we already have an answer to your question</p>
+    
+    <div class="row">
+
+        <div class="col-md-5 text-center order-md-2">
+            <img src="{% static 'images/faq.svg' %}" id="question-mark" alt="question mark">
+        </div>
+        
+        <div class="col-md-6 offset-md-1 order-md-1">
+            <div class="pxp-container">
+                <div class="mt-4 mt-lg-5 justify-content-center">
+                    <div >
+                    
+                        {% include './content.html' %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+const resizeSVG = () => {
+    if(window.innerWidth < 1100){
+        $('#question-mark')[0].width = 300
+    } else {
+        $('#question-mark')[0].width = 400
+    } 
+}
+
+$(document).ready(() => resizeSVG())
+$(window).on('resize',() => resizeSVG())
+</script>
+{% endblock javascript %}

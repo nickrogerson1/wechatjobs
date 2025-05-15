@@ -1,0 +1,151 @@
+{% load static %}
+
+<header class="pxp-header fixed-top pxp-no-bg">
+    <div class="pxp-container">
+        <div class="pxp-header-container">
+            <div class="pxp-logo-nav-container">
+                <div class="pxp-logo">
+                    <a href="/">
+                        <img src="{% static  'images/wechatjobs-logo.svg' %}" id="logo" alt="wechatjobs logo">
+                    </a>
+                </div>
+
+                <div class="pxp-nav-trigger navbar d-xl-none flex-fill">
+                    <a role="button" data-bs-toggle="offcanvas" data-bs-target="#pxpMobileNav" aria-controls="pxpMobileNav">
+                        <div class="pxp-line-1"></div>
+                        <div class="pxp-line-2"></div>
+                        <div class="pxp-line-3"></div>
+                    </a>
+                    <div class="offcanvas offcanvas-start pxp-nav-mobile-container" tabindex="-1" id="pxpMobileNav">
+                        <div class="offcanvas-header">
+                            <div class="pxp-logo">
+                                <a href="/">
+                                    <img src="{% static  'images/wechatjobs-logo.svg' %}" id="logo" alt="wechatjobs logo">
+                                </a>
+                            </div>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+
+
+                        <div class="offcanvas-body">
+                            <nav class="pxp-nav-mobile">
+                                <ul class="navbar-nav justify-content-end flex-grow-1">
+                                    <li class="nav-item nav-link"><a href="{% url 'about' %}">About Us</a></li>
+                                    <li class="nav-item nav-link"><a href="{% url 'faq' %}">FAQs</a></li>
+                                    <li class="nav-item nav-link"><a href="{% url 'contact' %}">Contact Us</a></li>
+                                    {% if request.user.is_authenticated %}
+                                    <li class="nav-item nav-link"><a href="{% if user.candidate %}{% url 'view-candidate' %}{% else %}{% url 'view-employer' %}{% endif %}">Dashboard</a></li>
+                                   
+                                    <li id="logout-sidebar" class="nav-item nav-link">
+                                        <form method="post" action="{% url 'logout' %}">
+                                            {% csrf_token %}
+                                            <input type="submit" value="Logout">
+                                        </form>
+                                    </li>
+
+
+                                    {% else %}
+                                    {% if request.path != '/login/' %}
+                                    <li class="nav-item nav-link"><a href="{% url 'login' %}" >Login</a></li>
+                                    {% endif %}
+                                    
+                                    {% if request.path != '/register/' %}
+                                    <li class="nav-item nav-link"><a href="{% url 'register' %}">Sign UP</a></li>
+                                    {% endif %}
+
+                                    {% endif %}
+                                    
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="pxp-nav dropdown-hover-all d-none d-xl-block">
+                    <ul>
+                        <li><a href="{% url 'about' %}">
+                                <div class="pxp-dropdown-text">About Us</div>
+                            </a>
+                        </li>
+                        <li><a href="{% url 'faq' %}">
+                                <div class="pxp-dropdown-text">FAQs</div>
+                            </a>
+                        </li>
+                        <li><a href="{% url 'contact' %}"><div class="pxp-dropdown-text">Contact Us</div></a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <nav class="pxp-user-nav pxp-on-light d-none d-xl-block">
+
+                <div class="d-flex">
+
+                {% if user.is_superuser %}
+                <div>
+                    <a href="{% url 'requested' %}" class="btn rounded-pill pxp-nav-btn me-2">Requested</a>
+                </div>
+                <div>
+                    <a href="{% url 'add' %}" class="btn rounded-pill pxp-nav-btn me-2">Add</a>
+                </div>
+                <div>
+                    <a href="{% url 'admin:index' %}" class="btn rounded-pill pxp-nav-btn me-2">Admin</a>
+                </div>
+                {% endif %}
+
+                {% if user.employer %}
+                <div>
+                    <a href="{% url 'post-job' %}" class="btn rounded-pill pxp-nav-btn me-2">Post FREE Job</a>
+                </div>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+            
+                <div class="dropdown pxp-user-nav-dropdown">
+                    <a href="" class="dropdown-toggle" data-bs-toggle="dropdown">
+                        <div class="pxp-dashboard-side-user-nav-avatar pxp-cover" style="background-image: url(
+                            {% if request.user.profile_pic %}
+                            {{ request.user.profile_pic.url }}
+                            {% elif request.user.employer %}
+                            {% static 'images/wechat-registered.webp' %}
+                            {% else %}
+                            {% static 'images/candidate-default.webp' %}
+                            {% endif %}
+                            );">
+                        </div>
+                        <div class="pxp-user-nav-name d-none d-md-block">{{ user.first_name }}</div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% if user.candidate %}{% url 'view-candidate' %}{% else %}{% url 'view-employer' %}{% endif %}">Dashboard</a></li>
+                        
+                    
+                        <li><a class="dropdown-item" href="
+                            {% if user.candidate %}
+                            {% url 'edit-candidate' %} 
+                            {% else %} 
+                            {% url 'edit-employer' %}
+                            {% endif %}
+                            ">Edit profile</a>
+                        </li>
+                        <li class="logout-nav">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <input class="logout-submit-nav" type="submit" value="Logout">
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                
+                {% else %}
+                <div>
+                    {% if request.path != '/login/' %}
+                    <a href="{% url 'login' %}" class="btn rounded-pill pxp-nav-btn">Login</a>
+                    {% endif %}
+                    {% if request.path != '/register/' %}
+                    <a href="{% url 'register' %}" class="btn rounded-pill pxp-nav-btn">Sign UP</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            </nav>
+        </div>
+    </div>
+</header>

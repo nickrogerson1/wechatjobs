@@ -1,0 +1,243 @@
+{% extends user.candidate|yesno:"jobsboard/layouts/candidate-base.html,jobsboard/layouts/employer-base.html" %}
+{% load static %}
+{% load countries %}
+
+{% block title %} Employer Profile {% endblock title %}
+
+{% block stylesheets %}
+
+<style>
+    .form-control:disabled {
+        background-color: #e9ecef !important;
+    }
+
+    #id_job_types {
+        display: grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
+        row-gap: 10px;
+    }
+
+    @media (max-width: 550px) {
+        #id_job_types {
+            grid-template-columns:repeat(auto-fit,minmax(170px, 1fr));
+            row-gap: 5px;
+        }
+    }
+
+    #profile-image {
+        height: auto;
+        width: 80%;
+        clip-path: circle();
+    }
+
+
+
+
+
+
+    h5 span {
+        font-weight: 300;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+
+</style>
+
+{% endblock stylesheets %}
+
+{% block innercontent %}
+
+<div class="pxp-dashboard-content-details">
+    <h1>Company Profile</h1>
+    {% if candidate_view %}
+    <p class="pxp-text-light">Here is some more information about this advertiser.</p>
+    {% elif user.pk == url_pk %}
+    <p class="pxp-text-light">This is your employer profile page which can be viewed by candidates.</p>
+    {% else %}
+    <p class="pxp-text-light">This is {{ name }}'s employer profile page.</p>
+    {% endif %}
+
+
+    <div class="row mt-4 mt-lg-5">
+        <h2>Basic Info</h2>
+
+
+        {% if profile_pic_url %}
+        <div class="row">
+
+            <div class="col-sm-6 mb-3">
+                <div class="d-flex justify-content-center">
+                    <img src="{{ profile_pic_url }}"  id="profile-image" alt="profile picture" >
+                </div>
+            </div>
+            
+            <div class="col-sm-6 mt-1">
+                
+                <div class="mb-3">
+                    <h5>Employer/Recruiter Name: <span>{{ name }}</span></h5>
+                </div>
+        
+                <div class="mb-3">
+                    <h5>Email: <span>{{ email }}</span></h5>
+                </div>
+    
+                <div class="mb-3">
+                    <h5>Wechat ID: <span>{% if wechat_id %}{{ wechat_id }}{% else %}N/A{% endif %}</span></h5>
+                </div>
+        
+                <div class="mb-3">
+                    <h5>Whatsapp: <span>{% if phone_number %}{{ phone_number }}{% else %}N/A{% endif %}</span></h5>
+                </div>
+
+                <div class="mb-3">
+                    <h5>Website: {% if website %}<a href="//{{ website }}">{{ website }}</a>{% else %}N/A{% endif %}</h5>
+                </div>
+        
+                <div class="mb-3">
+                    <h5>Company Size: <span>{% if company_size %}{{ company_size }} employees{% else %}N/A{% endif %}</span></h5>
+                </div>
+    
+                <div class="mb-3">
+                    <h5>City: <span>{% if city %}{{ city }}{% else %}N/A{% endif %}</span></h5>
+                </div>
+                    
+                <div>
+                        
+                    <h5>Country:
+                    {% if country %}
+                    {% get_country country as country %}
+                    <img src="{{ country.flag }}" alt="{{ country.name }} flag"> <span>{{ country.name }}
+                    {% else%}
+                    <span>N/A
+                    {% endif %}
+                    </span></h5>
+                </div>
+            </div>
+    
+        </div>
+    
+    
+        {% else %}
+        <div class="col-xxl-10">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Name: <span>{{ name }}</span></h5>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Email: <span>{{ email }}</span></h5>
+                    </div>
+                </div> 
+            </div>
+        
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Wechat ID: <span>{% if wechat_id %}{{ wechat_id }}{% else %}N/A{% endif %}</span></h5>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Whatsapp: <span>{% if phone_number %}{{ phone_number }}{% else %}N/A{% endif %}</span></h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Website: <span>{% if website %}{{ website }}{% else %}N/A{% endif %}</span></h5>
+                    </div>
+                </div>
+                
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Company Size: <span>{% if company_size %}{{ company_size }} employees{% else %}N/A{% endif %}</span></h5>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <h5>Current City: <span>{% if city %}{{ city }}{% else %}N/A{% endif %}</span></h5>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                            
+                        <h5>Country:
+                            {% if country %}
+                            {% get_country country as country %}
+                            <img src="{{ country.flag }}" alt="{{ country.name }} flag"> <span>{{ country.name }}
+                            {% else %}
+                            <span>N/A
+                            {% endif %}
+                            </span></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+
+        {% if job_types %}
+        <div class="mb-3 mt-2 col-xxl-10" > 
+            <h5>Jobs This Company Recruits For:</h5>
+            
+            <div id="id_job_types">
+                {% for jtype in job_types %}
+                    <h5><span>{{ jtype|title }}</span></h5>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% if intro %}
+        <div class="mb-3">
+            <h5>About This Company:</h5>
+            <p>{{ intro }}</p>
+        </div>
+        {% endif %}
+
+
+        {% if jobs %}
+
+        <h3 class="mb-3 text-center">Current Vacancies 当前职位空缺</h3>
+
+        {% for job in jobs %}
+
+        <h2>{{ forloop.counter }}. <a href="{% url 'job' job.pk %}">
+
+        {% if job.job_title %}
+
+            {{ job.job_title|truncatechars:50 }}
+        
+        {% else %}
+
+            {{ job.job_description|truncatechars:50 }}
+
+        {% endif %}
+
+        </a></h2>
+
+
+        {% endfor %}
+        {% endif %}
+
+    </div>
+</div>
+
+
+
+{% endblock innercontent %}

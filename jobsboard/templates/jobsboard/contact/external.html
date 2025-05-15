@@ -1,0 +1,236 @@
+{% extends "../layouts/base.html" %}
+{% load static %}
+
+
+{% block title %} Contact Us {% endblock title %}
+
+{% block stylesheets %}
+<style>
+
+    button[type="submit"] {
+        width: 50%;
+    }
+    
+    @media (max-width: 550px) {
+        button[type="submit"] {
+            width: 100%;
+        }
+    }
+    
+    .pxp-contact-us-form textarea {
+        height: 250px;
+    }
+
+    section {
+        margin-top: 150px;
+    }
+
+
+    .fa-refresh {
+        font-size: 2rem;
+    }
+
+    #captcha-refresh{
+        background-color: var(--pxpMainColor);
+        color: white;
+    }
+
+    .rotated{
+        animation-name: rotate; 
+        animation-duration: 0.3s; 
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes rotate {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(180deg);}
+    }
+
+
+
+
+
+
+
+      .container {
+        background-color: #ffffff;
+        border-radius: 25px;
+        margin-left: 10px;
+      }
+      
+
+      .wrapper {
+        width: 100%;
+        display: flex;
+      }
+      
+      .wrapper input[class^='field'] {
+        width: 50px;
+        font-size: 3rem;
+        border: none;
+        background-color: #EAF5F6;
+        border-radius: 5px;
+        text-align: center;
+        text-transform: uppercase;
+        color: #093030;
+        margin-right: 10px;
+      }
+      
+      .wrapper input[class^='field']:focus {
+        outline: none;
+      }
+
+      .surname {
+        opacity:0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 0;
+        width: 0;
+        z-index: -1;
+      }
+      
+
+</style>    
+
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<section>
+    <div class="pxp-container mt-5">
+
+        <div class="row mt-5 justify-content-center pxp-animate-in pxp-animate-in-top">
+            <div class="col-lg-8 col-xxl-6">
+                <div class="pxp-contact-us-form pxp-has-animation pxp-animate">
+                    <h1 class="pxp-section-h2 text-center">Contact Us</h1>
+                    <h5 class="pxp-text-light text-center">Get in touch and let us know what you think</h5>
+
+                    <form class="mt-4" method="post">
+
+                        {% csrf_token %}
+
+                        <label for="contact-us-name" class="form-label">Name</label>
+                        <span class="text-danger">{{ form.name.errors }}</span>
+                            {{ form.name }}
+
+                        <label for="contact-us-surname" class="form-label surname">Surname</label>
+                        <span class="text-danger">{{ form.surname.errors }}</span>
+                                {{ form.surname }}
+
+                        <label for="contact-us-email" class="form-label">Email</label>
+                        <span class="text-danger">{{ form.email.errors }}</span>
+                            {{ form.email }}
+
+                        <label for="contact-us-email" class="form-label">Wechat ID</label>
+                        <span class="text-danger">{{ form.wechat.errors }}</span>
+                            {{ form.wechat }}
+
+                        <label for="contact-us-subject" class="form-label">Subject</label>
+                        <span class="text-danger">{{ form.subject.errors }}</span>
+                            {{ form.subject }}
+
+                        <label for="contact-us-message" class="form-label">Message</label>
+                        <span class="text-danger">{{ form.message.errors }}</span>
+                            {{ form.message }}
+
+
+
+
+
+                        <label for="contact-us-captcha" class="form-label">Please prove you're a human</label>
+                        <span class="text-danger" id="captcha-error">{{ form.captcha.errors }}</span>
+                        <div class="d-flex">
+                            <button id='captcha-refresh' class="mt-2 mb-2 me-2"><span class="fa fa-refresh"></span></button>
+                            {{ form.captcha }}
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <button id="submit-btn" type="submit" disabled class="btn rounded-pill pxp-section-cta">Send Message</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+$('#captcha-refresh').click(function(e) {
+    
+    e.preventDefault()
+
+    $(this).children().addClass('rotated')
+    $.getJSON('/captcha/refresh/', res => {
+        $('.captcha').attr('src', res['image_url']);
+        $('#id_captcha_0').val(res['key'])
+    });
+    setTimeout(() => $(this).children().removeClass('rotated'),1000)
+});
+
+
+
+
+
+
+//Move the focus to the previous or next
+//depending on the input
+$(".wrapper input[class^='field']").each(function() {
+    $(this).on('keyup', handler);
+});
+
+function handler(e){
+
+    $('#captcha-error').hide()
+
+
+    const codeVals = [...$(this).parent().children()].reduce((a,x) => a += x.value, '').length
+    
+    //Only let them submit when code entered in full
+    if (codeVals === 4){
+        $('#submit-btn').removeAttr('disabled');
+    } else {
+        $('#submit-btn').attr('disabled','');
+    }
+
+
+    if (e.target.value.length >= 1) {
+        $(this).next().focus()
+  
+    }
+
+    //8 === delete key
+    //Ensures it moves backwards when pressed appropriately
+  
+
+    if(e.which === 8 && !$(this).data(this.className)){
+        $(this).prev().val('')
+        $(this).prev().focus();
+        $(this).prev().data($(this).prev().attr('class'), '');
+    } else {
+
+        $(this).data(this.className, $(this).val());
+
+    }
+
+}
+
+
+
+document.querySelector('form').addEventListener('formdata', e => {
+
+//$('form').on('formdata', e => {
+    //Reconstruct the code
+    const code = [...$('.wrapper').children()].reduce((a,x) => a += x.value, '')
+    e.formData.set('captcha_1', code);
+  });
+
+
+</script>
+{% endblock javascript %}

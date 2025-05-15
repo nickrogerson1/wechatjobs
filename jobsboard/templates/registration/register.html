@@ -1,0 +1,374 @@
+{% extends "../jobsboard/layouts/base.html" %}
+{% load static %}
+
+{% block title %} Sign Up {% endblock %}
+
+
+
+{% block stylesheets %}
+<style>
+.add-pointer {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.select-box {
+    border-radius: 30px;
+    padding-left:20px;
+    font-weight: 300;    
+}
+
+.select-box:focus {
+    color: var(--pxpTextColor);
+    border-color: var(--pxpDarkGrayColor);
+    box-shadow: none;
+}
+
+input[type=checkbox] {
+    transform: scale(1.2);
+    vertical-align: middle;
+}
+
+input[type=checkbox] + span {
+    vertical-align: middle;
+    padding-left: 5px;
+}
+
+/* Repositions the dropdown icon */
+.form-select{
+    background-position: right 1.7rem center;
+    background-size: 20px 14px;
+}
+
+.form-control:focus{
+    border-color: var(--pxpMainColorDark) !important;
+}
+
+
+
+
+
+
+
+
+
+.user-type-label{
+    opacity: .65;
+    transform: translateY(-.5rem) translateX(.15rem);
+    font-size: 0.9rem;
+}
+
+
+.radio-outer-container{
+    padding: 10px 0;
+}
+
+
+.radio-button-container {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-left: 20px;
+}
+
+.radio-button {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-button__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-button__label {
+    display: inline-block;
+    padding-left: 30px;
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.radio-button__custom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    transition: all 0.3s ease;
+}
+
+.radio-button__input:checked + .radio-button__label .radio-button__custom {
+    background-color: var(--pxpMainColor);
+    border-color: transparent;
+    transform: scale(0.8);
+    box-shadow: 0 0 20px #4c8bf580;
+}
+
+.radio-button__input:checked + .radio-button__label {
+    color: var(--pxpMainColor);
+}
+
+.radio-button__label:hover .radio-button__custom {
+    transform: scale(1.2);
+    border-color: var(--pxpMainColor);
+    box-shadow: 0 0 20px #4c8bf580;
+}
+
+.radio-button{
+    transition: transform 0.5s;
+}
+
+
+
+
+
+
+
+
+</style>
+{% endblock stylesheets %}
+
+
+
+{% block content %}
+
+<section class="pxp-hero vh-100" style="background-color: var(--pxpMainColorLight);">
+    <div class="row align-items-center pxp-sign-hero-container">
+        <div class="col-xl-6 pxp-column">
+            <div class="mt-5 pxp-sign-hero-fig text-center pb-100 pt-100">
+                <img src="{% static 'images/signup-big-fig.png' %}" alt="Sign up">
+                <h1 class="mt-4 mt-lg-5">Create an account</h1>
+            </div>
+        </div>
+        <div class="col-xl-6 pxp-column pxp-is-light">
+            <div class="pxp-sign-hero-form pb-100 pt-100">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 col-lg-7">
+                        <div class="pxp-sign-hero-form-content mt-50">
+                            <h5 class="text-center">Sign Up</h5>
+                            <form class="mt-4" method="post">
+
+                                {% csrf_token %}
+
+                                
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.username }}
+
+                                        <label for="pxp-signup-page-name">Pick a Username 用户名</label>
+                                        <span class="fa fa-user"></span>
+                                    </div>
+                                        <span class="text-danger">{{ form.username.errors }}</span>
+                                </div>
+                                
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.first_name }}
+
+                                        <label for="pxp-signup-page-name">What should we call you? 怎么称呼您</label>
+                                        <span class="fa fa-comment-o"></span>
+                                    </div>
+                                    <span class="text-danger">{{ form.first_name.errors }}</span>
+                                </div>
+            
+
+                                <div class="radio-outer-container">
+                                    <label class="user-type-label" for="pxp-signup-page-user-type">Pick your User Type (Unchangeable) 用户类型 (以后不能改)</label>
+                                    <div class="radio-button-container" id="user-type-container">
+                                        <div class="radio-button">
+                                            <input type="radio" class="radio-button__input" id="radio1" name="user_type" value="candidate">
+                                            <label class="radio-button__label" for="radio1">
+                                                <span class="radio-button__custom"></span>
+                                                Candidate 求职
+                                            </label>
+                                        </div>
+                                        <div class="radio-button">
+                                            <input type="radio" class="radio-button__input" id="radio2" name="user_type" value="employer">
+                                            <label class="radio-button__label" for="radio2">
+                                                <span class="radio-button__custom"></span>
+                                                Employer 招聘
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span class="text-danger">{{ form.user_type.errors }}</span>
+                                </div>
+                        
+
+
+                                <div class="radio-outer-container" id="sex-container" style="display:none;">
+                                    <label class="user-type-label" for="pxp-signup-page-sex">Sex 性别</label>
+                                    <div class="radio-button-container">
+                                        <div class="radio-button">
+                                            <input type="radio" class="radio-button__input" id="radio3" name="sex" value="male">
+                                            <label class="radio-button__label" for="radio3">
+                                                <span class="radio-button__custom"></span>
+                                                Male 男
+                                            </label>
+                                        </div>
+                                        <div class="radio-button">
+                                            <input type="radio" class="radio-button__input" id="radio4" name="sex" value="female">
+                                            <label class="radio-button__label" for="radio4">
+                                                <span class="radio-button__custom"></span>
+                                                Female 女
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span id="sex-errors" class="text-danger">{{ form.sex.errors }}</span>
+                                </div>
+             
+
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.country }}
+
+                                        <label for="pxp-signup-page-country">Country of Origin 国籍</label>
+                                        {% comment %} <span class="fa fa-flag-o"></span> {% endcomment %}
+                                    </div>
+                                    <span class="text-danger">{{ form.country.errors }}</span>
+                                </div>
+
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.email }}
+
+                                        <label for="pxp-signup-page-email">Email address 电子邮箱</label>
+                                        <span class="fa fa-envelope-o"></span>
+                                    </div>
+                                    <span class="text-danger">{{ form.email.errors }}</span>
+                                </div>
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.wechat_id }}
+
+                                        <label for="pxp-signup-page-email">Wechat ID (if you have one) 微信号（可选）</label>
+                                        <span class="fa fa-wechat"></span>
+                                    </div>
+                                    <span class="text-danger">{{ form.wechat_id.errors }}</span>
+                                </div>
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.password1 }}
+
+                                        <label for="pxp-signup-page-password1">Create a password 设置密码</label>
+                                        <span class="fa fa-unlock-alt"></span>
+                                    </div>
+                                    <span class="text-danger">{{ form.password1.errors }}</span>
+                                </div>
+
+                                <div>
+                                    <div class="form-floating mb-3">
+                                        {{ form.password2 }}
+
+                                        <label for="pxp-signup-page-password2">Enter Your Password Again 重复输入密码</label>
+                                        <span class="fa fa-lock"></span>
+                                    </div>
+                                    <span class="text-danger">{{ form.password2.errors }}</span>
+                                </div>
+
+                                <div class="mb-3 px-3">
+                                    {{ form.terms }} <span>I agree to the <a href="{% url 'terms' %}">Terms & Conditions</a></span>
+                                </div>
+
+                                <button type="submit" class="btn rounded-pill pxp-sign-hero-form-cta" style="width:100%">Continue</button>
+                                <div class="mt-4 text-center pxp-sign-hero-form-small">
+                                    Already have an account? <a href="{% url 'login' %}">Sign in</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+
+
+
+
+
+{% block javascript %}
+<script>
+
+// Next two handlers for focusing in and out of data boxes
+$('.form-control').on('focus', function(){
+    $(this).css({'padding': '0 1.3rem', 'font-size': '1.4rem'})
+    $(this).siblings()[0].hidden = true
+    $(this).siblings()[1].style.color = 'var(--pxpMainColor)'
+})
+
+
+$('.form-control').on('focusout', function(){
+    if(!$(this)[0].value){
+        $(this).css({'padding': '1.625rem 1.3rem .625rem'})
+        $(this).siblings()[0].hidden = false
+        $(this).siblings()[1].style.color = 'var(--pxpTextColor)'
+    }
+})
+
+
+// Next two handlers for the radio boxes
+
+// Handler if there any errors with the gender
+// Need this as radio boxes were built manually
+$(document).ready(()=> {
+    if($('#sex-errors').text()){
+        $('#sex-container').css('display', 'block')
+    // Has to be true as only shows for candidates
+        $('#radio1')[0].checked = true
+    }
+})
+
+
+
+$('.radio-button-container').on('change', function(){
+
+    if($(this)[0].id === 'user-type-container'){
+    // Check if candidate is checked
+        if($(this).children().children()[0].checked){
+            $('#sex-container').css('display', 'block')
+        } else {
+            $('#sex-container').css('display', 'none')
+            $('#sex-container input').prop('checked',false)
+            $('#sex-container .radio-button').each((i,x) => {
+                $(x).css('opacity', '1')
+                $(x).css('transform', 'scale(1)')
+            })
+        }
+    }
+
+    $(this).children().each((i,x) => {
+        if($(x).children()[0].checked){
+            $(x).css('opacity', '1')
+            $(x).css('transform', 'scale(1.1)')
+        } else {
+            $(x).css('opacity', '0.5')
+            $(x).css('transform', 'scale(0.9)')
+        }
+    })
+})
+
+
+</script>
+
+{% endblock javascript %}

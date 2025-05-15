@@ -1,0 +1,594 @@
+{% extends "./layouts/base.html" %}
+{% load static %}
+{% load custom_tags %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<style>
+.led-box {
+    margin: 5px 6px 0 0;
+}
+
+.led {
+    margin: 0 auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {background-color: #D22B2B;}
+    50% {background-color: #EE4B2B;}
+    100% {background-color: #D22B2B;}
+}
+
+#wechat-notice {
+    margin-top: 1px;
+    font-size: 1.1rem;
+}
+
+
+
+
+
+fieldset {
+  border:2px solid red;
+}
+
+legend {
+    padding: 0.2em 0.5em;
+    color: red;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    float: none;
+}
+
+fieldset p {
+    padding: 0 10px;
+    font-size: 1.2rem;
+}
+
+
+#qr-code {
+    margin-top: 20px;
+    text-align: center;
+
+}
+
+#qr-code img {
+    max-width: 90%;
+}
+
+@media (min-width: 700px) {
+        #qr-code img {
+        max-width: 60%;
+    }
+}
+
+@media (min-width: 1000px) {
+        #qr-code img {
+        max-width: 40%;
+    }
+}
+</style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+<section class="pxp-page-header-simple bg-pxp-main-color-light">
+    <div class="pxp-container">
+
+        <div class="d-flex">
+            <div class="led-box">
+                <div class="led"></div>
+            </div>
+            <p id="wechat-notice"><strong>WeChat API has been turned off</strong></p>
+        </div>
+
+
+        <h1>Search Jobs</h1>
+        <div class="pxp-hero-subtitle pxp-text-ligh">Find the right opportunity for you out of <strong>{{ total_count }}</strong> jobs. We have added <strong>{{ jobs_last_day }}</strong> jobs in the last 24 hours. </div>
+        <div class="pxp-hero-form pxp-hero-form-round pxp-large mt-3 mt-lg-4">
+
+            <form method="get" class="row gx-3 align-items-center" id="search-form" autocomplete="off">
+                <div class="col-12 col-lg-3 col-xl-4">
+                    <div class="input-group mb-3 mb-lg-0">
+                        <span class="input-group-text"><span class="fa fa-search"></span></span>
+                        {{ form.q }}
+                    </div>
+                </div>
+                <div class="col-12 col-lg pxp-has-left-border">
+                    <div class="input-group mb-3 mb-lg-0">
+                        <span class="input-group-text"><span class="fa fa-globe"></span></span>
+                        {{ form.loc }}
+                    </div>
+                </div>
+                <div class="col-12 col-lg pxp-has-left-border">
+                    <div class="input-group mb-3 mb-lg-0">
+                        <span class="input-group-text"><span class="fa fa-folder-o"></span></span>
+                        {{ form.type }}
+                    </div>
+                </div>
+               
+                <div class="col-12 col-lg pxp-has-left-border d-none" id="subject-container">
+                    <div class="input-group mb-3 mb-lg-0">
+                        <span class="input-group-text"><span class="fa fa-book"></span></span>
+                        {{ form.sub }}
+                    </div>
+                </div>
+                
+                <div class="col-12 col-lg-auto">
+                    <button type="submit" id="submit-button">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <section id="model-23"> 
+            <div class="card">
+                <div class="toggle">
+                    <input type="checkbox" id="check-23">
+                    <label for="check-23"></label>
+                </div>
+                <div id="option-text">
+                    <div>Advanced Options</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="mt-3 ms-3" id="advanced-options">
+            <div class="radio-outer-container">
+                <div class="radio-button-container" id="user-type-container">
+                    <div class="radio-button">
+                        <input type="radio" class="radio-button__input" id="radio1" name="options" form="search-form" checked value="show_all">
+                        <label  class="radio-button__label" for="radio1">
+                            <span class="radio-button__custom"></span>
+                            Show all results
+                        </label>
+                    </div>
+                    <div class="radio-button">
+                        <input type="radio" class="radio-button__input" id="radio2" name="options" form="search-form" value="has_wechat">
+                        <label class="radio-button__label" for="radio2">
+                            <span class="radio-button__custom"></span>
+                            Only show adverts with Wechat IDs
+                        </label>
+                    </div>
+                    <div class="radio-button">
+                        <input type="radio" class="radio-button__input" id="radio3" name="options" form="search-form" value="is_employer">
+                        <label class="radio-button__label" for="radio3">
+                            <span class="radio-button__custom"></span>
+                            Only show adverts from recruiters registered with this site
+                        </label>
+                    </div>
+                    <div class="radio-button">
+                        <input type="radio" class="radio-button__input" id="radio4" name="options" form="search-form" value="no_wechat">
+                        <label class="radio-button__label" for="radio4">
+                            <span class="radio-button__custom"></span>
+                            Only show adverts without a Wechat ID
+                        </label>
+                    </div>
+                </div>
+                <span class="text-danger">{{ form.user_type.errors }}</span>
+            </div>
+
+            <div>
+                <div class="autocomplete me-4 mt-2">
+                    <input class="wx-input" id="wxid-input" type="text" placeholder="Poster">
+                    <input id="wxid" type="hidden" name="wxid" form="search-form">
+                </div>
+                <div class="autocomplete mt-2">
+                    <input class="wx-input" id="group-input" type="text" placeholder="Group Name">
+                    <input id="group" type="hidden" name="group" form="search-form">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="mt-100">
+    <div class="pxp-container">
+
+    <div>
+        <fieldset>
+            <legend>NOTICE</legend>
+            <p>Due to on-going unsustainable server costs, the WeChat API has been turned off and no more new jobs will be added to the site. Any requests for WeChat IDs will not be fulfilled. Thank you for using WeChatJobs!</p>
+        </fieldset>
+    </div> 
+
+{% if user.is_superuser %}
+<!-- Job group and poster count top section  -->
+        <div class="container">
+            
+            {% if poster_count %}
+            <div>
+                <h3 class="text-center leaderboard">Top Posters</h3>
+                {% for p in poster_count %}
+
+                <p class="top-unit"><b>{{ p.c }}</b> 
+                    <a href="?wxid={{ p.wxid_alias__wxid }}">
+                        {{ p.wxid_alias__wxid }}
+                        {% for a in p.wxid_alias__wx_alias %}
+                            | {{ a }}
+                        {% endfor %}
+                    </a> 
+                </p> 
+
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if group_order %}
+            <div>
+                <h3 class="text-center leaderboard">Top Groups</h3>
+                {% for g in group_order %}
+                <p class="top-unit"><b>{{ g.c }}</b> 
+                    <a href="?group={{ g.group__group_id }}&options=no_wechat">{{ g.group__group_name }}</a> 
+                </p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="ms-4">
+                <h4 class="leaderboard">WXIDS WITH WX_ALIAS: {{ wxids_with_alias }}</h3>
+                <h4 class="leaderboard">TOTAL WXIDS: {{ total_wxids }}</h3>
+                <h4 class="leaderboard">% WXIDS WITH ALIAS: {{ unique_percent }}%</h3>
+                <hr>
+                <h4 class="leaderboard">JOBS WITH WX_ALIAS: {{ jobs_with_wx_alias }}</h3>
+                <h4 class="leaderboard">TOTAL JOBS: {{ total_jobs_exc_employers }}</h3>
+                <h4 class="leaderboard">% JOBS WITH ALIAS: {{ total_percent }}%</h3>
+            </div>
+        </div>
+    <!-- End of this admin section -->
+
+    {# Create a form for superusers, so they can submit data #}
+    <form id="admin-form" method="post" action="{% url 'update-data' %}">
+        {% csrf_token %}
+        <button type="submit" class="mt-5 btn rounded-pill pxp-section-cta" name="submit-data">Submit Data</button>
+{% endif %}
+
+
+    <div class="pxp-jobs-list-top mt-3 mt-lg-4">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-auto">
+                <h2><span class="pxp-text-light">
+                {% if search_query %}Found{% else %}Showing all{% endif %}
+                </span> 
+                {% if total_without_ids %}
+                    {{ total_without_ids }} WXIDs without an alias in {{ groups_without_alias }} groups with requested IDs in the last {{ days }} days removed
+                {% elif requested_ids %}
+                    of {{ requested_ids }} {% if requested_ids == 1 %} WXID that has {% else %} WXIDS that have {% endif %} recently been requested
+                {% else %}
+                    {{ page_obj.paginator.count }} <span class="pxp-text-light">job{{ page_obj.paginator.count|pluralize }}
+                    {{ search_query|safe }}
+                {% endif %}
+                </h2>
+            </div>
+
+            <div class="col-auto">
+                <select class="form-select reselect">
+                    {% if 'q=' in query_param1 %}
+                    <option value="/{{ query_param1 }}" {% if 'order' not in request.get_full_path %}selected{% endif %}>Most relevant</option>
+                    {% endif %}
+                    <option value="/{{ query_param1 }}{% if query_param1 %}&{% else %}?{% endif %}order=N" {% if 'order=N' in request.get_full_path %}selected{% endif %}>Newest</option>
+                    <option value="/{{ query_param1 }}{% if query_param1 %}&{% else %}?{% endif %}order=O" {% if 'order=O' in request.get_full_path %}selected{% endif %}>Oldest</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div>
+    {% for job in object_list %}
+        {% if user.is_superuser %}
+        <h3 class="mt-5">DB: {{ job.job_description }}</h3>    
+        {% endif %}
+            {# These two lines are outside of the superuser context #}
+            <div class="pxp-jobs-card-3 pxp-has-border">
+                <div>
+
+                {% if user.is_superuser %}
+                <div class="flex-container">
+                    <h3>{% if request.path == '/add/' %}GROUP{% else %}RANK{% endif %}: {{ job.score|safe }}</h3>
+                    <h3>IS_JOB: {{ job.is_job }}</h3>
+                    <h3>ALIAS: 
+                        {% for a in job.wxid_alias.wx_alias %}
+                        {% if forloop.last %}
+                            {{ a }}
+                        {% else %}
+                            {{ a }},
+                        {% endif %} 
+                        {% endfor %}
+                    </h3>
+
+                    <h3>WXID: {{ job.wxid_alias.wxid }}</h3>
+                    <input class="admin-cb" type="checkbox" name="wxid" value="{{ job.wxid_alias.wxid }}">
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-lg-3 d-flex align-items-center">
+                        <label for="wx-alias-input-{{ forloop.counter }}" class="wx-alias-label me-2">WX_ALIAS:</label>
+                        <input type="text" id="wx-alias-input-{{ forloop.counter }}" data-wxid="{{ job.wxid_alias.wxid }}" class="wx-alias-input" name="wx-alias-{{ job.wxid_alias.wxid }}" placeholder="Enter WX_ALIAS">
+                    </div>
+                    <div class="col-md-8 col-lg-9 d-flex align-items-center">
+                        <h5 class="mb-0">TIMESTAMPS:
+                            {% for a in job.wxid_alias.wx_alias_requests_sent_by_me %}
+                            {% if forloop.last %}
+                                {{ a|date:'D, jS M y, g:i a' }}
+                            {% else %}
+                                {{  a|date:'D, jS M y, g:i a' }},
+                            {% endif %} 
+                            {% endfor %}
+                        </h5>
+                    </div>
+                </div>
+                {% endif %}
+
+                    <div class="row">
+                        <div class="col-4 col-md-2 col-lg-1">
+                            {# Display image and link if authenticated and they have an employer profile #}
+                            {% if user.is_authenticated and job.employer %}
+                            <a href="{% url 'view-employer' job.employer.user.pk %}/" class="pxp-jobs-card-3-company-logo" style="background-image: url(
+                                {% if job.employer.user.profile_pic %} 
+                                    {{ job.employer.user.profile_pic.url }}
+                                {% else %}
+                                    {% static 'images/wechat-registered.webp' %}
+                                {% endif %}
+
+                                );"></a>
+                            
+                            {% else %}
+
+                            {# Check there's an employer profile, then display their pic or default pic  #}
+                        
+                            <div class="pxp-jobs-card-3-company-logo" style="background-image: url(
+                                {% if job.employer and job.employer.user.profile_pic %}
+                                    {{ job.employer.user.profile_pic.url }}
+                                {% elif job.employer %}
+                                    {% static 'images/wechat-registered.webp' %}
+                                {% elif job.wxid_alias.wx_alias %}
+                                    {% static 'images/wechat-tick.webp' %}
+                                {% else %}
+                                    {% static 'images/wechat-funny-red.webp' %}
+                                {% endif %}
+                            );"></div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-8 col-md-2 col-lg-3">
+                            <div class="mx-4">
+                                    {% for type in job.job_types %}
+                                    <a href="?type={{ type }}">
+{% if type in 'dj,ktv' %}{{ type|upper }}{% else %}{{ type|title }}{% endif %}</a>{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                                        {% empty %}
+                                            N/A
+                                    {% endfor %}
+                            </div>
+                        </div>
+                    
+                        <div class="col-12 col-md-8">
+                            {% if job.active_promotion %}
+                            <div class="text-md-end mt-3 mt-md-0">
+                                <h5 class="badge rounded-pill bg-danger" id="promoted">Promoted</h5>
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'job' job.pk %}{% if query_param %}?{% endif %}{{ query_param }}">
+                        
+                                {% if job.job_title %}
+                                <h4 class="mt-3 mt-md-0">{{ job.job_title|safe }}</h4>
+                                {% endif %}
+
+                                <p class="mt-3 mt-md-0">
+                                {% if job.keyword_search_desc %}
+                                    {{ job.keyword_search_desc|safe }}
+                                {% else %}
+                                    {{ job.job_description|safe|truncatewords_html:50 }}
+                                {% endif %}
+                                </p>
+                            </a>
+                        </div>
+                        <div>
+                    </div>
+                </div>
+
+                <div class="pxp-jobs-card-3-details col-sm-3">
+                    <div class="pxp-jobs-card-3-location">
+                        <span class="fa fa-globe"></span>
+                        {% if job.cities|length > 10 %}
+                        <a href="/">Everywhere</a>
+                        {% else %} 
+                            {% for city in job.cities %}
+                            <a href="?loc={{ city }}">{{ city|title }}</a>{% if forloop.revcounter == 2 %}&nbsp;&&nbsp;{% elif not forloop.last %},&nbsp;{% endif %}
+                            {% empty %}
+                            N/A
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                {% if job.subjects %}
+                    <div>
+                        <div class="pxp-jobs-card-3-category">
+                            <div class="pxp-jobs-card-3-category-label">
+                            <span class="fa fa-graduation-cap text-dark"></span>
+                            {% for sub in job.subjects %}
+                            <a href="?sub={{ sub }}">
+{% if sub in 'esl,ielts,toefl,toeic' %}{{ sub|upper }}{% else %}{{ sub|title }}{% endif %}</a>{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                    <div class="row align-items-center">
+
+                        <div class="pxp-jobs-card-3-date-company col-12{% if user.candidate %} col-md-7{% endif %}">
+                            <span class="pxp-jobs-card-3-date pxp-text-light">
+                        {% if job.scraped %}
+                                Scraped from Wechat {{ job.time_created|timesince }} ago. Posted by</span> 
+                            <a href="?wxid={{ job.wxid_alias.wxid }}" class="pxp-jobs-card-3-company">{{ job.wx_handle.handle }}</a> 
+                            in <a href="?group={{ job.group.group_id }}" class="pxp-jobs-card-3-company">{{ job.group.group_name }}</a>
+                        {% else %}
+                                Posted {{ job.time_updated|timesince }} ago by</span> <a href="
+                                {% if job.employer and request.user.is_authenticated %}
+                                {% url 'view-employer' job.employer.user.pk %}/
+                                {% else %}
+                                {% url 'register' %}
+                                {% endif %}
+                                ">{{ job.employer.user.first_name }}</a>.
+                        
+                        {% endif %}
+                        </div>                
+
+                        {% if user.candidate %}
+                        <div class="pxp-single-job-options col-12 col-md-5 mt-sm-0">
+                            <!-- Push the buttons to the right -->
+                            <div class="like-apply-container" data-pk="{{ job.pk }}" >
+            
+                                <div class="like-button-container btn">
+                                    <div>
+                                      <input type="checkbox" class="like-button" id="checkbox-{{ forloop.counter }}"  {% if job.fave %}checked{% endif %} />
+                                      <label for="checkbox-{{ forloop.counter }}">
+                                        <svg class="heart-svg" viewBox="467 392 58 57" xmlns="http://www.w3.org/2000/svg">
+                                            <g class="Group" fill="none" fill-rule="evenodd" transform="translate(467 392)">
+                                            <path d="M29.144 20.773c-.063-.13-4.227-8.67-11.44-2.59C7.63 28.795 28.94 43.256 29.143 43.394c.204-.138 21.513-14.6 11.44-25.213-7.214-6.08-11.377 2.46-11.44 2.59z" class="heart" fill="#AAB8C2"/>
+                                            <circle class="main-circ" fill="#E2264D" opacity="0" cx="29.5" cy="29.5" r="1.5"/>
+                                            <g class="grp7" opacity="0" transform="translate(7 6)">
+                                                <circle class="oval1" fill="#9CD8C3" cx="2" cy="6" r="2"/>
+                                                <circle class="oval2" fill="#8CE8C3" cx="5" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp6" opacity="0" transform="translate(0 28)">
+                                                <circle class="oval1" fill="#CC8EF5" cx="2" cy="7" r="2"/>
+                                                <circle class="oval2" fill="#91D2FA" cx="3" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp3" opacity="0" transform="translate(52 28)">
+                                                <circle class="oval2" fill="#9CD8C3" cx="2" cy="7" r="2"/>
+                                                <circle class="oval1" fill="#8CE8C3" cx="4" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp2" opacity="0" transform="translate(44 6)">
+                                                <circle class="oval2" fill="#CC8EF5" cx="5" cy="6" r="2"/>
+                                                <circle class="oval1" fill="#CC8EF5" cx="2" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp5" opacity="0" transform="translate(14 50)">
+                                                <circle class="oval1" fill="#91D2FA" cx="6" cy="5" r="2"/>
+                                                <circle class="oval2" fill="#91D2FA" cx="2" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp4" opacity="0" transform="translate(35 50)">
+                                                <circle class="oval1" fill="#F48EA7" cx="6" cy="5" r="2"/>
+                                                <circle class="oval2" fill="#F48EA7" cx="2" cy="2" r="2"/>
+                                            </g>
+                                            <g class="grp1" opacity="0" transform="translate(24)">
+                                                <circle class="oval1" fill="#9FC7FA" cx="2.5" cy="3" r="2"/>
+                                                <circle class="oval2" fill="#9FC7FA" cx="7.5" cy="2" r="2"/>
+                                            </g>
+                                            </g>
+                                        </svg>
+                                      </label>
+                                    </div>
+                                </div> 
+
+                        {# Only show apply button if there's an actual registered employer #}
+                        {% if job.employer %}
+                                
+                                <button class="btn rounded-pill pxp-section-cta apply-btn
+                                    {% if job.app.0.status == 'revoked' %}
+                                    bg-warning">Re-apply
+                                    {% elif job.app.0.status == 'rejected' or job.app.0.employer_removed %}
+                                    bg-danger" disabled>Rejected
+                                    {% elif job.app.0.status == 'pending' %}
+                                    applied">Revoke App
+                                    {% elif job.app.0.status == 'approved' %}
+                                    bg-info" disabled>Approved
+                                    {% else %}
+                                    ">Apply Now
+                                    {% endif %}
+                                   
+                                </button>
+                            {% endif %}  
+                            </div>
+                        </div>
+                        {% endif %}  
+
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p>No results found.</p>
+            {% endfor %}
+        </div>
+
+
+        {% if is_paginated %}
+        <div class="row mt-4 mt-lg-5 justify-content-between align-items-center">
+            <div class="col-auto">
+                <nav class="mt-3 mt-sm-0" aria-label="Jobs list pagination">
+                    <ul class="pagination pxp-pagination">
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if i == 1 %}
+                            {% if page_obj.number == i %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ i }}</span>
+                                </li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="/?page={{ i }}{% if query_param2 %}&{{ query_param2 }}{% endif %}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if i != 1 and i != page_obj.paginator.page_range|last %}
+                            {% if page_obj.number == i %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ i }}</span>
+                                </li>
+                            {% else %}
+                                {% if page_obj.number|add:-3 == i %}
+                                <li class="page-item page-link">...</li>
+                                {% endif %}
+                                {% if page_obj.number|add:2 >= i and page_obj.number|add:-2 <= i %}
+                                <li class="page-item"><a class="page-link" href="/?page={{ i }}{% if query_param2 %}&{{ query_param2 }}{% endif %}">{{ i }}</a></li>
+                                {% endif %}
+                                {% if page_obj.number|add:3 == i %}
+                                <li class="page-item page-link">...</li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        {% if i == page_obj.paginator.page_range|last %}
+                            {% if page_obj.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ page_obj.paginator.page_range|last }}</span>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="/?page={{ page_obj.paginator.page_range|last }}{% if query_param2 %}&{{ query_param2 }}{% endif %}">{{ page_obj.paginator.page_range|last }}</a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.is_superuser %}
+        {# Close the form off for superusers #}
+        </form>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}
+
+
+
+
+{% block javascript %}
+<script>
+    const csrfmiddlewaretoken = '{{ csrf_token }}';
+    const groups = {{ groups|safe }}
+    const posters = {{ posters|safe }}
+</script>
+
+<script src="{% static 'js/home.js' %}"></script>
+{% endblock javascript %}

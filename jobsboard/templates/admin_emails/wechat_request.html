@@ -1,0 +1,13 @@
+<h3>Requester Info</h3>
+<p><strong>Username</strong>: {{ username }}</p>
+<p><strong>Name</strong>: {{ name }}</p>
+<p><strong>Email</strong>: {{ email }}</p>
+<p><strong>User IP</strong>: {{ user_ip }}</p>
+<p><strong>Country</strong>: {{ country }}</p>
+<hr>
+<h3>Message Details</h3>
+<p><strong>Time Message Created</strong>: {{ time_created|date:'D, jS M y, g:i a' }} UTC</p>
+<p><strong>Group Message From</strong>: {{ message_group_from }}</p>
+<p><strong>Poster Handle</strong>: {{ poster_handle }}</p>
+<p><strong>Job Description</strong>:</p>
+<p>{{ job_description|linebreaks }}</p>

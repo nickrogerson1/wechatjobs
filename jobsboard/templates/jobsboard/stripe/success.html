@@ -1,0 +1,46 @@
+{% extends "jobsboard/layouts/employer-base.html" %}
+{% load static %}
+
+{% block title %} Edit Employer Profile {% endblock %}
+
+{% block stylesheets %}
+<style>
+#gold{
+    display: block;
+    margin:auto;
+}
+
+@media (max-width: 1100px){
+    #gold{
+        width: 500px;
+    }
+}
+
+@media (max-width: 800px){
+    #gold{
+        width: 400px;
+    }
+}
+
+</style>
+{% endblock stylesheets %}
+
+
+{% block innercontent %}
+
+<section>
+    <div class="pxp-container">
+
+        <div class="row mt-5 justify-content-center pxp-animate-in pxp-animate-in-top">
+            <div class="col-lg-10 col-xxl-8">
+                <div class="pxp-has-animation pxp-animate">
+                    <h1 class="pxp-section-h2 text-center">Your payment was successful!</h1>
+                    <h5 class="pxp-text-light text-center">Your ad has now been promoted! You can <a href="{% url 'job' job_pk %}">view your ad here.</a></h5>
+                    <img id="gold" class="text-center" src="{% static 'images/pot-of-gold.svg' %}">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock innercontent %}

@@ -1,0 +1,206 @@
+{% extends "../layouts/table-base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+<style>
+#delete-area{
+    display: none;
+    visibility: hidden;
+    color: white;
+}
+
+#delete-area button{
+    color: white;
+    font-weight: 700;
+}
+
+/* Turn off all pointer events when disabled */
+button:disabled {
+    opacity: 50%;
+    pointer-events: none;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block title %} Job Applications {% endblock title %}
+
+{% block noneselected %}a job application{% endblock noneselected %} 
+
+{% block h1 %}Applications{% endblock h1 %}
+
+{% block detailedlist %}Detailed list of all your job applications.{% endblock detailedlist %}
+
+{% block deleteurl %}{% url 'delete-job-app' %}{% endblock deleteurl %}
+
+{% block tableempty %}You've still not applied for any jobs yet!{% endblock tableempty %}
+
+{% block table %}
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th class="pxp-is-checkbox" style="width: 1%;"><input type="checkbox" id="select-all-items" class="form-check-input"></th>
+            <th>Job</th>
+            <th>Company</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th colspan="2">Date Applied
+            {% if jobs|length > 1 %}
+                {% if order == 'A' %}
+                    <a href="{% url 'job-apps' %}">
+                    <span class="fa fa-angle-up ms-3 fa-2x" style="vertical-align: sub;"></span>
+                    </a>
+                {% else %}
+                    {# This the default ordering #}
+                    <a href="{% url 'job-apps' %}?order=A">
+                    <span class="fa fa-angle-down fa-2x ms-2" style="vertical-align: sub;"></span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            </th>
+            {% comment %} <th>&nbsp;</th> {% endcomment %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for job in jobs %}
+        <tr data-pk="{{ job.job.pk }}" data-app-pk="{{ job.pk }}">
+            <td><input type="checkbox" class="form-check-input checkbox" id="{{ job.pk }}" value="{{ job.pk }}" name="pks" form="delete-files"></td>
+            <td>
+                <a href="{% url 'job' job.job.pk %}">
+                    <div class="pxp-candidate-dashboard-job-title">
+                        {% if job.job.job_title %}
+                            {{ job.job.job_title|truncatewords:10 }}
+                        {% else %}
+                            {{ job.job.job_description|truncatewords:10 }}
+                        {% endif %}
+                    </div>
+                    <div class="pxp-candidate-dashboard-job-location">
+                        <span class="fa fa-globe me-1"></span>
+                            {% if job.job.cities|length > 10 %}
+                            Everywhere
+                        {% else %} 
+                            {% for city in job.job.cities %}
+                            {{ city|title }}{% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                            {% empty %}
+                            N/A
+                            {% endfor %}
+                        {% endif %}
+                        
+                    </div>
+                </a>
+            </td>
+            <td>
+                {% if job.job.employer %}
+                <a href="{% url 'view-employer' job.job.employer.pk %}" class="pxp-candidate-dashboard-job-company">{{ job.job.employer }}</a>
+                {% endif %}
+            </td>
+            <td>
+                <div class="pxp-candidate-dashboard-job-category">
+                    {% for type in job.job.job_types %}
+                    
+                        {% if type in 'dj,ktv' %}
+                            {{ type|upper }}
+                        {% else %}
+                            {{ type|title }}
+                        {% endif %}
+
+                        {% if forloop.revcounter == 2 %} &{% elif not forloop.last %},{% endif %}
+                        {% empty %}
+                        N/A
+                    {% endfor %}
+                </div>
+            </td>
+
+            <td>
+                <div class="pxp-company-dashboard-job-status">
+                    <span class="badge rounded-pill
+
+                    {% if job.status == 'revoked' %}
+                        bg-warning">Revoked
+                    {% elif job.status == 'rejected' or job.employer_removed %}
+                        bg-danger">Rejected
+                    {% elif job.status == 'pending' %}
+                        bg-secondary">Pending
+                    {% elif job.status == 'approved' %}
+                        bg-success">Approved
+                    {% endif %}
+                    </span>
+                </div>
+            </td>
+
+            <td><div class="pxp-candidate-dashboard-job-date mt-1">{{ job.time_created }}</div></td>
+
+            <td>
+                <div class="pxp-dashboard-table-options">
+                    <ul class="list-unstyled">
+                        <a href="{% url 'job' job.job.pk %}"><li><button title="View"><span class="fa fa-eye"></span></button></li></a>
+
+                        {% if job.status == 'revoked' %}
+                            <li><button title="Re-apply" class="revoke-apply"><span class="fa fa-check">
+                        {% elif job.status == 'rejected' or job.employer_removed %}
+                            <li><button disabled><span class="fa fa-ban">
+                        {% else %}
+                            <li><button title="Revoke" class="revoke-apply"><span class="fa fa-ban">
+                        {% endif %}
+                          
+                            </span></button></li>
+
+                        <form method="post" action="{% url 'delete-job-app' job.pk %}">
+                            {% csrf_token %} 
+                            <li>
+                                <input type="hidden"  />
+                                <button type="submit" title="Delete">
+                                    <span class="fa fa-trash-o" ></span>
+                                </button>
+                            </li>
+                        </form>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock table %}
+
+{% block javascript2 %}
+<script>
+const csrfmiddlewaretoken = '{{ csrf_token }}';
+
+$('.revoke-apply').on('click', updateAppStatus)
+
+
+function updateAppStatus() {
+
+    const icon = $(this).children()
+    const is_revoke_icon = icon[0].className.includes('fa-ban')
+
+
+    const el = $(this.closest('tr')).find('.pxp-company-dashboard-job-status span') 
+                .removeClass(['bg-success','bg-danger','bg-secondary','bg-warning'])
+
+
+    let status
+
+    if(is_revoke_icon){
+        icon.removeClass('fa-ban').addClass('fa-check')
+        this.title = 'Re-apply'
+        el.addClass('bg-warning').html('Revoked')
+        status = 'revoked'
+    } else {
+        icon.removeClass('fa-check').addClass('fa-ban')
+        this.title = 'Revoke'
+        el.addClass('bg-secondary').html('Pending')
+        status = 'pending'
+    }
+    
+    //Keep it as a string so the server can work with it
+    const pk = $(this).closest('tr').data('appPk').toString()
+    
+    sendAjaxRequest(JSON.stringify(pk), status)
+
+}
+
+
+</script>
+{% endblock javascript2 %}

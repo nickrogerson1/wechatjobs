@@ -1,0 +1,189 @@
+{% extends "./layouts/base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+<style>
+    .pxp-services-1-item-icon::before{
+        background-color: var(--pxpMainColor);
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block title %} About WechatJobs {% endblock %}
+
+{% block content %}
+<section class="pxp-page-image-hero pxp-cover" style="background-image: url({% static 'images/wechat-hero.webp' %});">
+
+    <div class="pxp-hero-opacity"></div>
+    <div class="pxp-page-image-hero-caption">
+        <div class="pxp-container">
+            <div class="row justify-content-center">
+                <div class="col-9 col-md-8 col-xl-7 col-xxl-6">
+                    <h1 class="text-center">Find the perfect job in <span style="font-size: 5rem;">China</span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section class="mt-100">
+    <div class="pxp-container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-xxl-9 main-text">
+                <h2 class="pxp-section-h2 text-center">About WeChatJobs</h2>
+                <p class="pxp-text-light text-center">It's time to change how you look for a job in China</p>
+
+                <div class="mt-4 mt-md-5">
+                <h4>The Problem</h4>
+                <p>You have probably noticed that the same person or groups of people post the same job ads multiple times across different Wechat groups. 
+                Actually, if you are a member of more than about 10 WeChat groups, your WeChat inbox will quickly become overwhelmed with just group chats unless you know how to minimise them - which not everyone does.</p>
+
+                <p>Now imagine you are a member of 1000 WeChat groups. It quickly becomes impossible to keep track of all the messages you receive as one will come in every second. Not only that, 
+                most will be messaged that are copied and pasted across various groups making it tedious and time-consuming to keep track of them all.</p>
+
+                <h4>The Solution</h4>
+                <p><strong>WeChatJobs</strong>. We only ever add the job to our job database the first time the job was posted. Even if someone else posts it with another Wechat ID, 
+                then it won’t be added to our database. Not only that, some posters tend to tweak their copied messages to make it seem as if there not a group spammer. 
+                Don’t worry, we also remove job ads that are 85% similar to previous messages we have added to our database, so you’ll never see them either.</p>
+
+                <h4>How It Works</h4>
+                <p>Our account is linked to over 1000 Wechat job groups. The messages are first parsed to make sure they are a job. 
+                    If it turns out they are a valid job (or at least appear to be), then we will mark it up and add it to our database.</p>
+
+                <p>Employers can also add jobs directly by signing up for an employers’ account and post jobs directly. This is the preferred way as candidates can submit an interest and apply jobs directly.</p>
+
+                <h4>How To Use The Site</h4>
+                <p>Due to the way Wechat’s data privacy rules work, we can’t always get access to everyone’s Wechat ID despite being able to see the messages they post within the group chats.</p>
+
+                <p>Signed in candidates can access the Wechat ID of the advertiser if we have it. If we don’t the Wechat ID, then you can make a request for it inside the job ad and we will do our best to get it for you.</p>
+
+
+                <p>As a useful helper, we also provide the group chat name and the handle of the person who posted the message. This can be useful when you’re already a member of a group and you can then go into that group and find them yourself.</p>
+
+                <h4>The three most common images you will see next to job ads are these:</h4>
+
+                <div class="row mt-5">
+                    <img alt="wechat logo" src="{% static 'images/wechat-funny-red.webp' %}" class="offset-2 offset-sm-0 offset-md-1 col-8 col-sm-5 col-md-4 col-lg-3" style="border-radius: 30px;">
+                    <p class="mt-4 mt-sm-2 col-12 col-sm-7">The <strong><span style="color:#fe0000">red Wechat logo</span></strong>  with a happy and sad face means that we have no contact information for this poster at all. The best we can do is provide the group name and the user’s handle (the name the person has used in that group).</p>
+                </div>
+
+                <div class="row mt-5">
+                    <img alt="wechat logo" src="{% static 'images/wechat-tick.webp' %}" class="offset-2 offset-sm-0 offset-md-1 col-8 col-sm-5 col-md-4 col-lg-3"  style="border-radius: 30px;">
+                    <p class="mt-4 mt-sm-2 col-12 col-sm-7">The <strong><span style="color:var(--pxpMainColor)">green Wechat logo</span></strong> with a blue tick inside a shield means that we have the Wechat handle for this poster and you can contact them directly by clicking on the job ad and adding their Wechat ID in the Wechat app on your phone.</p>
+                </div>
+
+                <div class="row mt-5">
+                    <img alt="wechat logo" src="{% static 'images/wechat-registered.webp' %}" class="offset-2 offset-sm-0 offset-md-1 col-8 col-sm-5 col-md-4 col-lg-3" style="border-radius: 30px;">
+                    <p class="mt-4 col-12 col-sm-7">The <strong><span style="color:#0000ff">blue Wechat logo</span></strong> with a thumbs up means this advertiser is registered with the site and you can apply for jobs with them via the site.</p>
+                </div>
+
+                <p class="mt-3">Any other images you see were uploaded by the advertiser themselves and they are also registered with the site.</p>
+
+
+                <h4>Search Features</h4>
+
+                <p>We offer a variety of seach features to help you find the jobs you are looking for. The three most useful are displayed immediately at the top of the page. 
+                 These allow you to search by keyword, (Chinese) location and job type. If you select one of the teaching jobs, then you will also be able to search by school subjects.</p>
+
+                <p>On top of this, we also offer some advanced features where you can choose just to display jobs posted by registered users, users with and without Wechat IDs.</p>        
+
+                <p>We also allow you to search by Wechat group and Wechat users.</p>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section class="pt-50">
+    <div class="pxp-container">
+        <h2 class="text-center">How We Can Help</h2>
+
+        <div class="row justify-content-evenly mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+            <div class="col-lg-6 col-xl-5 pxp-services-1-item-container">
+                <div class="pxp-services-1-item pxp-animate-icon">
+                    <div class="pxp-services-1-item-icon text-center">
+                        <img src="{% static 'images/service-1-icon.png' %}" alt="Candidate">
+                    </div>
+                    <h3 class="text-center mt-5">For Candidates</h3>
+                    <ul class="pxp-text-light mt-3 main-text">
+                        <li>Search by keyword, location, job type, subject, groups and posters.</li>
+                        <li>Save jobs you like and share with friends.</li>
+                        <li>Auto apply to employers without the hassle of submitting a full application.</li>
+                        <li>Upload all your details to one place and submit it to recruiters in China.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-5 pxp-services-1-item-container">
+                <div class="pxp-services-1-item pxp-animate-icon">
+                    <div class="pxp-services-1-item-icon text-center">
+                        <img src="{% static 'images/service-2-icon.png' %}" alt="Employer">
+                    </div>
+                    <h3 class="text-center mt-5">For Employers</h3>
+                    <ul class="pxp-text-light mt-3 main-text">
+                        <li>Add your own jobs and personalise them.</li>
+                        <li>Provide extra information to potential candidates.</li>
+                        <li>Monitor your jobs – see who has shown an interest and who has applied.</li>
+                        <li>Access candidate information directly on the site in one place.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="mt-100">
+    <div class="pxp-container">
+        <div class="row justify-content-between align-items-center mt-4 mt-md-5">
+            <div class="col-lg-6 col-xxl-5">
+                <div class="pxp-info-fig pxp-animate-in pxp-animate-in-right">
+                    <div class="pxp-info-fig-image pxp-cover" style="background-image: url({% static 'images/wechat-opening-screen.webp' %});"></div>
+                    <div class="pxp-info-stats">
+                        <div class="pxp-info-stats-item pxp-animate-in pxp-animate-bounce">
+                            <div class="pxp-info-stats-item-number">{{ jobs_last_day }}<span>job offers</span></div>
+                            <div class="pxp-info-stats-item-description">in the last 24 hours</div>
+                        </div>
+                        <div class="pxp-info-stats-item pxp-animate-in pxp-animate-bounce">
+                            <div class="pxp-info-stats-item-number">{{ total_count }}<span>jobs</span></div>
+                            <div class="pxp-info-stats-item-description">added in the last month</div>
+                        </div>
+                        <div class="pxp-info-stats-item pxp-animate-in pxp-animate-bounce">
+                            <div class="pxp-info-stats-item-number">{{ teach_related }}<span>teaching jobs</span></div>
+                            <div class="pxp-info-stats-item-description">added in the last month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-xxl-6">
+                <div class="pxp-info-caption pxp-animate-in pxp-animate-in-top mt-4 mt-sm-5 mt-lg-0">
+                    <h2 class="pxp-section-h2">Thousands of jobs in China.<br>Find the one that suits you.</h2>
+                    <p class="pxp-text-light">Search from an array of jobs being posted around China for Expats and Chinese alike.</p>
+                    <div class="pxp-info-caption-list main-text">
+                        <div class="pxp-info-caption-list-item">
+                            <img src="{% static 'images/check.svg' %}" alt="-"><span>No more duplicate job ads</span>
+                        </div>
+                        <div class="pxp-info-caption-list-item">
+                            <img src="{% static 'images/check.svg' %}" alt="-"><span>Jobs you can search</span>
+                        </div>
+                        <div class="pxp-info-caption-list-item">
+                            <img src="{% static 'images/check.svg' %}" alt="-"><span>Contact advertisers directly</span>
+                        </div>
+                    </div>
+                    <div class="pxp-info-caption-cta">
+                        <a href="{% url 'register' %}" class="btn rounded-pill pxp-section-cta">Get Started Now<span class="fa fa-angle-right"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

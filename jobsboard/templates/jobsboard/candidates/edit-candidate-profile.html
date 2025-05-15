@@ -1,0 +1,287 @@
+{% extends "../layouts/candidate-base.html" %}
+{% load static %}
+
+{% block title %} Edit Candidate Profile {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+    .form-control:disabled {
+        background-color: #e9ecef !important;
+    }
+
+    #id_job_types {
+        display: grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px, 1fr));
+        row-gap: 10px;
+    }
+
+    @media (max-width: 550px) {
+        #id_job_types {
+        grid-template-columns:repeat(auto-fit,minmax(170px, 1fr));
+        row-gap: 5px;
+        }
+    }
+
+    input[type=checkbox] {
+        transform: scale(1.2);
+    }
+
+    .form-label {
+        font-size: 1.2rem !important;
+    }
+
+    .errorlist {
+        font-size: 1.2rem;
+    }
+
+
+    #trash-can {
+        display: block;
+        color: red;
+        font-size: 1.9rem;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    #trash-can:hover {
+        opacity: 0.5;
+    }
+
+    #trash-can + a {
+        font-size: 1.3rem;
+    }
+
+
+    .form-select, .form-control {
+        font-size: 1.2rem;
+    }
+
+/* Prevent the whatsapp text from disappearing */
+    @media (min-width:992px) and (max-width:1162px)  {
+        #id_phone_number {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (min-width:575px) and (max-width:820px)  {
+        #id_phone_number {
+            font-size: 0.9rem;
+        }
+    }
+
+    #id_cv{
+        padding-left: 30px;
+    }
+
+
+    {% if cv_url %}
+    #upload-cv { 
+        display: none; 
+    }
+    {% endif %}
+
+</style>
+
+{% endblock stylesheets %}
+
+{% block innercontent %}
+
+<div class="pxp-dashboard-content-details">
+
+{% if messages %}
+    {% for message in messages %}
+        
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success subs-removed-success" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        {% if message.tags == 'info' %}
+        <div class="alert alert-info subs-remove-info" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        {% if message.tags == 'error' %}
+        <div class="alert alert-danger subs-removed-error" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+    {% endfor %}
+{% endif %}
+
+
+    <h1>Edit Profile</h1>
+    <p class="pxp-text-light">Edit your candidate profile page info.</p>
+
+    <form method="post" enctype="multipart/form-data" id="candidate-form">
+
+        {% csrf_token %}
+
+        <div class="row mt-4 mt-lg-5">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-name" class="form-label">Name</label>
+                        {{ form.name }}
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-email" class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-dob" class="form-label">Date of Birth</label>
+                        {{ form.dob }}
+                    </div>
+                    <span class="text-danger">{{ form.dob.errors }}</span>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-name" class="form-label">Wechat ID</label>
+                        {{ form.wechat_id }}
+                    </div>
+                    <span class="text-danger">{{ form.wechat_id.errors }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-sex" class="form-label">Sex</label>
+                        {{ form.sex }}
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-name" class="form-label">WhatsApp</label>
+                        {{ form.phone_number }}
+                    </div>
+                    <span class="text-danger">{{ form.phone_number.errors }}</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-location" class="form-label">Current City</label>
+                        {{ form.city }}
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <label for="pxp-candidate-candidate" class="form-label">Country of Origin</label>
+                        {{ form.country }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="pxp-candidate-job-types" class="form-label">Which Jobs Are You Most Interested In?</label>
+            {{ form.job_types }}
+        </div>
+
+        <div class="mt-3 mb-3">
+            <label for="pxp-candidate-about" class="form-label">About you</label>
+            {{ form.intro }}
+        </div>
+            
+        <div class="mt-4">
+
+            {% if cv_url %}
+
+            <div id="delete-cv">
+                <h4>Your Uploaded CV</h4>
+                <div class="d-flex">
+                    <i id="trash-can" class="fa fa-trash me-2" aria-hidden="true" data-toggle="tooltip" 
+                    title="Delete this CV"></i>
+                    <a href="{{ cv_url }}">{{ cv_fname }}</a>
+                </div>
+               
+            </div>
+            
+            {% endif %} 
+            
+          {# Has to be hidden and not else'd as may still need it #}  
+            <div id="upload-cv">
+                <h5 style="color:red;">You still haven't uploaded a CV.</h5>
+                <label for="pxp-candidate-cv" class="form-label">Upload Your CV</label>
+                {{ form.cv }}
+            </div>
+            <span class="text-danger">{{ form.cv.errors }}</span>
+            
+            
+        </div>
+
+        <div class="mt-4 mt-lg-5">
+            <button type="submit" class="btn rounded-pill pxp-section-cta">Save Profile</button>
+        </div>
+    </form>
+</div>
+
+{% endblock innercontent %}
+
+{% block javascript %}
+<script>
+
+$(document).ready(() =>{
+    $('[data-toggle="tooltip"]').tooltip()
+    $('.alert').fadeTo(5000, 500).slideUp(500)
+});
+
+
+
+//Get the filename when the page loads
+//When the form is submitted, check the initial filename with the submitted filename
+//This is a trivial check, so no need to store the val locally
+let initialVal;
+
+$(document).ready(()=> {
+    initialVal = $('#delete-cv').find('a').text()
+})
+
+document.querySelector('#candidate-form').addEventListener('formdata', e => {
+    cvHasChanged = $('#delete-cv').find('a').text() !== initialVal ? 1 : 0
+    e.formData.set('cv_changed', cvHasChanged);
+});
+
+
+$('#trash-can').on('click', function(e) {
+    e.preventDefault()
+
+    $('#delete-cv').fadeOut(500, function() {
+        $('#upload-cv').css('display', 'block')
+    });
+
+    $.ajax({
+            type: 'DELETE',
+            url: '/delete-cv/',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            dataType: 'html',
+        });
+
+    if(this.dataset.type !== 'cv'){
+        this.parentNode.remove()
+    }
+})
+
+</script>
+{% endblock javascript %}

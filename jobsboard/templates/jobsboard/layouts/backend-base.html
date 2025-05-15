@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="en" class="pxp-root">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="shortcut icon" href="{% static 'images/wechat-favicon.jpg' %}" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+        <style>
+            #logout{
+                background-color: #fff;
+                transition: var(--pxpHoverTransition);
+                transition-property: color, opacity;
+                color: var(--pxpTextColor);
+                padding: 0px 20px;
+            }
+
+            #logout input{
+                background-color: #fff;
+                color:#000000;
+                font-size:14px;
+                padding: 7px 20px 7px 0px;
+                border: 0;
+
+            }
+
+        </style>
+
+        <title>
+            {% block title %} Profiles {% endblock %}
+        </title>
+
+        {# Custom stylesheets #}
+        {% block stylesheets %}{% endblock stylesheets %}
+
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_AuugAoN2FdvvPRAuLWEmZ7ZUqx6ca0HZFP11OAAM8Ej', {api_host: 'https://eu.i.posthog.com', person_profiles: 'identified_only'})
+    </script>
+    
+    </head>
+
+    {% block content %}{% endblock content %}
+
+
+    <footer>
+        {% now "Y" as current_year %} 
+        <div class="pxp-footer-copyright pxp-text-light">© {{ current_year }} WeChatJobs. All Rights Reserved.</div>
+    </footer>
+    </div>
+
+   
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+{% block javascript2 %}{% endblock javascript2 %}
+{% block javascript %}{% endblock javascript %}
+{% load tz_detect %}
+{% tz_detect %}
+</body>
+</html>
