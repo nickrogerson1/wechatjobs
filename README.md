@@ -27,3 +27,6 @@ The trickiest part of this build was the image and video handling. The Python Pi
 
 ### Current Status
 The app is currently frozen due to high server costs and issues with the third party WeChat API provider.
+
+### Miscellaneous
+I had to do another initial commit post launch to wipe some hostorical password leaks. This project was never intended to be a public repo.
